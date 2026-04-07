@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {
   Sparkles,
   ExternalLink,
@@ -7,23 +7,11 @@ import {
   UtensilsCrossed,
   ShoppingBag,
 } from 'lucide-vue-next';
-import type { Component } from 'vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
 import { cn } from '@/shared/lib/utils';
 
-type NewsletterItem = {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  tags: string[];
-  icon: Component;
-  color: string;
-  urgent: boolean;
-};
-
-const newsletters: NewsletterItem[] = [
+const newsletters = [
   {
     id: 1,
     title: '배달비 아끼는 냉장고 파먹기 꿀팁',
@@ -67,10 +55,10 @@ const newsletters: NewsletterItem[] = [
 ];
 
 const weeklyInsights = [
-  { label: '식비', change: -12, trend: 'down' as const },
-  { label: '교통비', change: 5, trend: 'up' as const },
-  { label: '문화생활', change: -8, trend: 'down' as const },
-  { label: '쇼핑', change: 15, trend: 'up' as const },
+  { label: '식비', change: -12, trend: 'down' },
+  { label: '교통비', change: 5, trend: 'up' },
+  { label: '문화생활', change: -8, trend: 'down' },
+  { label: '쇼핑', change: 15, trend: 'up' },
 ];
 </script>
 

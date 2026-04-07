@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref } from 'vue';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
-import { expenses, formatAmount, categoryInfo, type Expense } from '@/lib/expenses-data';
+import { expenses, formatAmount, categoryInfo } from '@/lib/expenses-data';
 import { cn } from '@/shared/lib/utils';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -24,7 +24,7 @@ const MONTHS = [
 
 const now = new Date();
 const currentDate = ref(new Date(now.getFullYear(), now.getMonth(), 1));
-const selectedDate = ref<string | null>(
+const selectedDate = ref(
   `${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`
 );
 const showPanel = ref(false);
@@ -38,7 +38,7 @@ const monthStr = computed(() => String(month.value + 1).padStart(2, '0'));
 const monthExpenses = computed(() => expenses.filter((e) => e.date.startsWith(monthStr.value)));
 
 const expensesByDay = computed(() => {
-  const map: Record<string, Expense[]> = {};
+  const map = {};
   monthExpenses.value.forEach((e) => {
     const day = e.date.split(' ')[0];
     if (!map[day]) map[day] = [];
@@ -47,7 +47,7 @@ const expensesByDay = computed(() => {
   return map;
 });
 
-function getDayTotal(dayStr: string) {
+function getDayTotal(dayStr) {
   return (expensesByDay.value[dayStr] || []).reduce((sum, e) => sum + e.amount, 0);
 }
 
@@ -59,7 +59,7 @@ function nextMonth() {
   currentDate.value = new Date(year.value, month.value + 1, 1);
 }
 
-function onDayClick(day: number) {
+function onDayClick(day) {
   const dayStr = `${monthStr.value}.${String(day).padStart(2, '0')}`;
   selectedDate.value = dayStr;
   showPanel.value = true;
@@ -69,19 +69,8 @@ const selectedExpenses = computed(() =>
   selectedDate.value ? expensesByDay.value[selectedDate.value] || [] : []
 );
 
-type CalCell =
-  | { kind: 'blank' }
-  | {
-      kind: 'day';
-      day: number;
-      dayStr: string;
-      total: number;
-      selected: boolean;
-      isToday: boolean;
-    };
-
-const calendarCells = computed((): CalCell[] => {
-  const cells: CalCell[] = [];
+const calendarCells = computed(() => {
+  const cells = [];
   for (let i = 0; i < firstDayOfMonth.value; i++) cells.push({ kind: 'blank' });
   const t = new Date();
   for (let day = 1; day <= daysInMonth.value; day++) {

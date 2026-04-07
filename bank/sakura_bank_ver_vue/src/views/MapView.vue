@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { MapPin, Flower2, AlertTriangle } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
@@ -6,14 +6,14 @@ import { formatAmount } from '@/lib/expenses-data';
 import { cn } from '@/shared/lib/utils';
 
 const locationData = [
-  { id: 1, name: '강남역', x: 55, y: 45, type: 'warning' as const, amount: 125000, visits: 8 },
-  { id: 2, name: '홍대입구', x: 35, y: 35, type: 'success' as const, amount: 32000, visits: 3 },
-  { id: 3, name: '신촌', x: 38, y: 30, type: 'success' as const, amount: 28000, visits: 4 },
-  { id: 4, name: '이태원', x: 52, y: 40, type: 'warning' as const, amount: 89000, visits: 5 },
-  { id: 5, name: '잠실', x: 70, y: 48, type: 'success' as const, amount: 45000, visits: 6 },
-  { id: 6, name: '여의도', x: 42, y: 50, type: 'success' as const, amount: 35000, visits: 2 },
-  { id: 7, name: '명동', x: 50, y: 38, type: 'warning' as const, amount: 156000, visits: 10 },
-  { id: 8, name: '압구정', x: 58, y: 42, type: 'warning' as const, amount: 203000, visits: 7 },
+  { id: 1, name: '강남역', x: 55, y: 45, type: 'warning', amount: 125000, visits: 8 },
+  { id: 2, name: '홍대입구', x: 35, y: 35, type: 'success', amount: 32000, visits: 3 },
+  { id: 3, name: '신촌', x: 38, y: 30, type: 'success', amount: 28000, visits: 4 },
+  { id: 4, name: '이태원', x: 52, y: 40, type: 'warning', amount: 89000, visits: 5 },
+  { id: 5, name: '잠실', x: 70, y: 48, type: 'success', amount: 45000, visits: 6 },
+  { id: 6, name: '여의도', x: 42, y: 50, type: 'success', amount: 35000, visits: 2 },
+  { id: 7, name: '명동', x: 50, y: 38, type: 'warning', amount: 156000, visits: 10 },
+  { id: 8, name: '압구정', x: 58, y: 42, type: 'warning', amount: 203000, visits: 7 },
 ];
 
 const successLocations = computed(() => locationData.filter((l) => l.type === 'success'));
@@ -22,10 +22,11 @@ const topLocations = computed(() =>
   [...locationData].sort((a, b) => b.amount - a.amount).slice(0, 5)
 );
 
-function rankClass(index: number) {
-  if (index === 0) return 'bg-amber-100 text-amber-700';
-  if (index === 1) return 'bg-gray-200 text-gray-600';
-  if (index === 2) return 'bg-amber-700/20 text-amber-800';
+function rankClass(index) {
+  const i = Number(index);
+  if (i === 0) return 'bg-amber-100 text-amber-700';
+  if (i === 1) return 'bg-gray-200 text-gray-600';
+  if (i === 2) return 'bg-amber-700/20 text-amber-800';
   return 'bg-gray-100 text-gray-500';
 }
 </script>

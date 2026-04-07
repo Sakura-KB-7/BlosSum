@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import {
@@ -30,21 +30,21 @@ const navItems = [
   { id: 'charms', label: '부적 콜렉션', to: '/charms', icon: Sparkles },
   { id: 'map', label: '소비 지도', to: '/map', icon: Map },
   { id: 'newsletter', label: 'AI 소식지', to: '/newsletter', icon: Newspaper },
-] as const;
+];
 
 const extraItems = [
   { id: 'transactions', label: '거래 내역', to: '/transactions', icon: List },
   { id: 'transaction-new', label: '거래 등록', to: '/transactions/new', icon: PlusCircle },
   { id: 'settings', label: '설정', to: '/settings', icon: Settings },
-] as const;
+];
 
 const displayName = computed(() => profile.profile?.name || '사용자님');
 
-function isMainActive(to: string) {
+function isMainActive(to) {
   return route.path === to || (to === '/dashboard' && route.path === '/');
 }
 
-function isExtraActive(item: (typeof extraItems)[number]) {
+function isExtraActive(item) {
   if (item.to === '/transactions')
     return route.name === 'transactions' || route.name === 'transaction-edit';
   if (item.to === '/transactions/new') return route.name === 'transaction-new';

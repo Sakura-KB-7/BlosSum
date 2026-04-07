@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { formatAmount } from '@/lib/expenses-data';
 
-const props = defineProps<{
-  data: { name: string; value: number; category?: string }[];
-}>();
+const props = defineProps({
+  data: { type: Array, required: true },
+});
 
 const COLORS = ['#F472B6', '#60A5FA', '#FBBF24', '#2DD4BF', '#4ADE80', '#9CA3AF'];
 
@@ -13,7 +13,7 @@ const total = computed(() => props.data.reduce((s, d) => s + d.value, 0));
 const conic = computed(() => {
   if (!total.value || props.data.length === 0) return 'conic-gradient(#e5e7eb 0deg 360deg)';
   let acc = 0;
-  const parts: string[] = [];
+  const parts = [];
   props.data.forEach((d, i) => {
     const pct = (d.value / total.value) * 360;
     const start = acc;
