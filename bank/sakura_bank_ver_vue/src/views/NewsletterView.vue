@@ -8,9 +8,9 @@ import {
   ShoppingBag,
 } from 'lucide-vue-next';
 import type { Component } from 'vue';
-import UiCard from '@/components/ui/UiCard.vue';
-import UiButton from '@/components/ui/UiButton.vue';
-import { cn } from '@/lib/utils';
+import UiCard from '@/shared/ui/UiCard.vue';
+import UiButton from '@/shared/ui/UiButton.vue';
+import { cn } from '@/shared/lib/utils';
 
 type NewsletterItem = {
   id: number;

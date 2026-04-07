@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterView } from 'vue-router';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import CherryBlossomBackground from '@/components/CherryBlossomBackground.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 

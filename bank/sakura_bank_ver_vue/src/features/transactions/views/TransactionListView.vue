@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
-import UiCard from '@/components/ui/UiCard.vue';
-import UiButton from '@/components/ui/UiButton.vue';
-import { useBudgetStore } from '@/stores/budget';
-import { useCategoryStore } from '@/stores/categories';
+import UiCard from '@/shared/ui/UiCard.vue';
+import UiButton from '@/shared/ui/UiButton.vue';
+import { useBudgetStore } from '@/features/transactions/stores/budget';
+import { useCategoryStore } from '@/features/transactions/stores/categories';
 import type { BudgetType } from '@/types/models';
 
 const budget = useBudgetStore();

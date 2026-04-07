@@ -12,7 +12,7 @@ export default createRouter({
         {
           path: 'dashboard',
           name: 'dashboard',
-          component: () => import('@/views/DashboardView.vue'),
+          component: () => import('@/features/dashboard/views/DashboardView.vue'),
         },
         {
           path: 'calendar',
@@ -37,17 +37,17 @@ export default createRouter({
         {
           path: 'transactions',
           name: 'transactions',
-          component: () => import('@/views/TransactionListView.vue'),
+          component: () => import('@/features/transactions/views/TransactionListView.vue'),
         },
         {
           path: 'transactions/new',
           name: 'transaction-new',
-          component: () => import('@/views/TransactionFormView.vue'),
+          component: () => import('@/features/transactions/views/TransactionFormView.vue'),
         },
         {
           path: 'transactions/:id/edit',
           name: 'transaction-edit',
-          component: () => import('@/views/TransactionFormView.vue'),
+          component: () => import('@/features/transactions/views/TransactionFormView.vue'),
         },
         {
           path: 'settings',

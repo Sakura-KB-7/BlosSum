@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-vue-next';
-import UiCard from '@/components/ui/UiCard.vue';
-import UiButton from '@/components/ui/UiButton.vue';
+import UiCard from '@/shared/ui/UiCard.vue';
+import UiButton from '@/shared/ui/UiButton.vue';
 import { expenses, formatAmount, categoryInfo, type Expense } from '@/lib/expenses-data';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const MONTHS = [
