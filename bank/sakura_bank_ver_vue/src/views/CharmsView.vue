@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Lock, Sparkles } from 'lucide-vue-next';
-import UiCard from '@/components/ui/UiCard.vue';
+import UiCard from '@/shared/ui/UiCard.vue';
 import { charms, expenses, formatAmount, categoryInfo } from '@/lib/expenses-data';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 const unlockedCount = computed(() => charms.filter((c) => c.unlocked).length);
 const recentExpenses = computed(() => expenses.slice(0, 6));

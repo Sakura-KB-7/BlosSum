@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { MapPin, Flower2, AlertTriangle } from 'lucide-vue-next';
-import UiCard from '@/components/ui/UiCard.vue';
+import UiCard from '@/shared/ui/UiCard.vue';
 import { formatAmount } from '@/lib/expenses-data';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 const locationData = [
   { id: 1, name: '강남역', x: 55, y: 45, type: 'warning' as const, amount: 125000, visits: 8 },

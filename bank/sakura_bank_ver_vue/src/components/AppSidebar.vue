@@ -13,9 +13,9 @@ import {
   PlusCircle,
   Settings,
 } from 'lucide-vue-next';
-import { cn } from '@/lib/utils';
-import { useBudgetStore } from '@/stores/budget';
-import { useCategoryStore } from '@/stores/categories';
+import { cn } from '@/shared/lib/utils';
+import { useBudgetStore } from '@/features/transactions/stores/budget';
+import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { useProfileStore } from '@/stores/profile';
 
 const route = useRoute();

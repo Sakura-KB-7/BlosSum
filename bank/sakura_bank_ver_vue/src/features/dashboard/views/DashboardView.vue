@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import { TrendingDown, TrendingUp, Target, ArrowUpRight, ArrowDownRight } from 'lucide-vue-next';
-import UiCard from '@/components/ui/UiCard.vue';
-import CategoryPie from '@/components/CategoryPie.vue';
+import UiCard from '@/shared/ui/UiCard.vue';
+import CategoryPie from '@/features/dashboard/components/CategoryPie.vue';
 import {
   expenses,
   formatAmount,

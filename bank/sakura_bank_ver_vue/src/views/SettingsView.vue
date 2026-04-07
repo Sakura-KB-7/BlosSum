@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import UiCard from '@/components/ui/UiCard.vue';
-import UiButton from '@/components/ui/UiButton.vue';
+import UiCard from '@/shared/ui/UiCard.vue';
+import UiButton from '@/shared/ui/UiButton.vue';
 import { useProfileStore } from '@/stores/profile';
 
 const profile = useProfileStore();
