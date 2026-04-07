@@ -1,11 +1,10 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
-import type { BudgetType, PaymentMethod, RecordRow } from '@/types/models';
 
 const route = useRoute();
 const router = useRouter();
@@ -15,15 +14,14 @@ const categories = useCategoryStore();
 const isEdit = computed(() => typeof route.params.id === 'string' && route.params.id.length > 0);
 
 const date = ref('');
-const type = ref<BudgetType>('expense');
-/** select는 문자열/숫자 혼재 가능 */
-const categoryId = ref<string | number>('');
+const type = ref('expense');
+const categoryId = ref('');
 const title = ref('');
-const amount = ref<number | null>(null);
-const paymentMethod = ref<PaymentMethod>('card');
+const amount = ref(null);
+const paymentMethod = ref('card');
 const memo = ref('');
 const isFixed = ref(false);
-const recurringDay = ref<number | null>(null);
+const recurringDay = ref(null);
 const saving = ref(false);
 
 const categoryList = computed(() =>
@@ -31,7 +29,7 @@ const categoryList = computed(() =>
 );
 
 function loadFromRow() {
-  const id = route.params.id as string;
+  const id = route.params.id;
   const row = budget.items.find((x) => String(x.id) === id);
   if (!row) return;
   date.value = row.date;
@@ -62,14 +60,14 @@ watch(type, () => {
   categoryId.value = '';
 });
 
-function parseCategoryId(): number {
+function parseCategoryId() {
   const v = categoryId.value;
   if (v === '' || v === null || v === undefined) return NaN;
   return typeof v === 'number' ? v : Number(v);
 }
 
-function buildPayload(): Omit<RecordRow, 'id'> {
-  const base: Omit<RecordRow, 'id'> = {
+function buildPayload() {
+  const base = {
     type: type.value,
     date: date.value,
     categoryId: parseCategoryId(),
@@ -102,7 +100,7 @@ async function onSubmit() {
   try {
     const payload = buildPayload();
     if (isEdit.value) {
-      await budget.updateRow(route.params.id as string, payload);
+      await budget.updateRow(route.params.id, payload);
     } else {
       await budget.createRow(payload);
     }

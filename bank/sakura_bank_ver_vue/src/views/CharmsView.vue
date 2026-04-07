@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { Lock, Sparkles } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';

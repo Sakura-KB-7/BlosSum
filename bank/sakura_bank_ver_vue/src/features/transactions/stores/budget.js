@@ -1,27 +1,26 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { http } from '@/api/http';
-import type { BudgetType, RecordRow } from '@/types/models';
 
-function sameMonth(dateIso: string, y: number, m: number) {
+function sameMonth(dateIso, y, m) {
   const d = new Date(dateIso);
   return d.getFullYear() === y && d.getMonth() + 1 === m;
 }
 
-function idPart(id: number | string) {
+function idPart(id) {
   return String(id);
 }
 
 export const useBudgetStore = defineStore('budget', () => {
-  const items = ref<RecordRow[]>([]);
+  const items = ref([]);
   const loading = ref(false);
-  const error = ref<string | null>(null);
+  const error = ref(null);
 
   async function fetchAll() {
     loading.value = true;
     error.value = null;
     try {
-      const { data } = await http.get<RecordRow[]>('/records');
+      const { data } = await http.get('/records');
       items.value = Array.isArray(data) ? data : [];
     } catch (e) {
       error.value = '거래 내역을 불러오지 못했습니다. json-server가 켜져 있는지 확인하세요.';
@@ -31,14 +30,14 @@ export const useBudgetStore = defineStore('budget', () => {
     }
   }
 
-  async function createRow(body: Omit<RecordRow, 'id'>) {
-    const { data } = await http.post<RecordRow>('/records', body);
+  async function createRow(body) {
+    const { data } = await http.post('/records', body);
     items.value.unshift(data);
     return data;
   }
 
-  async function updateRow(id: string, payload: Omit<RecordRow, 'id'>) {
-    const { data } = await http.put<RecordRow>(`/records/${idPart(id)}`, {
+  async function updateRow(id, payload) {
+    const { data } = await http.put(`/records/${idPart(id)}`, {
       ...payload,
       id: Number(id) || id,
     });
@@ -47,17 +46,12 @@ export const useBudgetStore = defineStore('budget', () => {
     return data;
   }
 
-  async function removeRow(id: string) {
+  async function removeRow(id) {
     await http.delete(`/records/${idPart(id)}`);
     items.value = items.value.filter((x) => idPart(x.id) !== id);
   }
 
-  function filtered(params: {
-    type?: BudgetType | '';
-    categoryId?: number | '';
-    from?: string;
-    to?: string;
-  }) {
+  function filtered(params) {
     return items.value.filter((row) => {
       if (params.type && row.type !== params.type) return false;
       if (
@@ -76,7 +70,7 @@ export const useBudgetStore = defineStore('budget', () => {
     [...items.value].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 8)
   );
 
-  function monthlyTotals(year: number, month: number) {
+  function monthlyTotals(year, month) {
     const rows = items.value.filter((r) => sameMonth(r.date, year, month));
     let income = 0;
     let expense = 0;

@@ -110,25 +110,116 @@
       "paymentMethod": "card",
       "memo": "주말",
       "isFixed": false
+    },
+    {
+      "type": "expense",
+      "date": "2026-04-07",
+      "categoryId": 1,
+      "title": "점심식사",
+      "amount": 4300,
+      "paymentMethod": "card",
+      "memo": "해물짬뽕",
+      "isFixed": false,
+      "id": 11
     }
   ],
   "categories": [
-    { "id": 1, "name": "식비", "type": "expense", "color": "#FF6384" },
-    { "id": 2, "name": "공과금", "type": "expense", "color": "#36A2EB" },
-    { "id": 3, "name": "교통", "type": "expense", "color": "#FFCE56" },
-    { "id": 4, "name": "문화생활", "type": "expense", "color": "#4BC0C0" },
-    { "id": 5, "name": "의료", "type": "expense", "color": "#9966FF" },
-    { "id": 6, "name": "교육", "type": "expense", "color": "#FF9F40" },
-    { "id": 7, "name": "주거", "type": "expense", "color": "#C9CBCF" },
-    { "id": 8, "name": "외식", "type": "expense", "color": "#7E57C2" },
-    { "id": 9, "name": "쇼핑", "type": "expense", "color": "#EC407A" },
-    { "id": 10, "name": "미용", "type": "expense", "color": "#26A69A" },
-    { "id": 11, "name": "경조사", "type": "expense", "color": "#D4E157" },
-    { "id": 12, "name": "자녀교육", "type": "expense", "color": "#FFEE58" },
-    { "id": 13, "name": "기타", "type": "expense", "color": "#BDBDBD" },
-    { "id": 14, "name": "월급", "type": "income", "color": "#4CAF50" },
-    { "id": 15, "name": "이자·배당", "type": "income", "color": "#66BB6A" },
-    { "id": 16, "name": "용돈·기타수입", "type": "income", "color": "#81C784" }
+    {
+      "id": 1,
+      "name": "식비",
+      "type": "expense",
+      "color": "#FF6384"
+    },
+    {
+      "id": 2,
+      "name": "공과금",
+      "type": "expense",
+      "color": "#36A2EB"
+    },
+    {
+      "id": 3,
+      "name": "교통",
+      "type": "expense",
+      "color": "#FFCE56"
+    },
+    {
+      "id": 4,
+      "name": "문화생활",
+      "type": "expense",
+      "color": "#4BC0C0"
+    },
+    {
+      "id": 5,
+      "name": "의료",
+      "type": "expense",
+      "color": "#9966FF"
+    },
+    {
+      "id": 6,
+      "name": "교육",
+      "type": "expense",
+      "color": "#FF9F40"
+    },
+    {
+      "id": 7,
+      "name": "주거",
+      "type": "expense",
+      "color": "#C9CBCF"
+    },
+    {
+      "id": 8,
+      "name": "외식",
+      "type": "expense",
+      "color": "#7E57C2"
+    },
+    {
+      "id": 9,
+      "name": "쇼핑",
+      "type": "expense",
+      "color": "#EC407A"
+    },
+    {
+      "id": 10,
+      "name": "미용",
+      "type": "expense",
+      "color": "#26A69A"
+    },
+    {
+      "id": 11,
+      "name": "경조사",
+      "type": "expense",
+      "color": "#D4E157"
+    },
+    {
+      "id": 12,
+      "name": "자녀교육",
+      "type": "expense",
+      "color": "#FFEE58"
+    },
+    {
+      "id": 13,
+      "name": "기타",
+      "type": "expense",
+      "color": "#BDBDBD"
+    },
+    {
+      "id": 14,
+      "name": "월급",
+      "type": "income",
+      "color": "#4CAF50"
+    },
+    {
+      "id": 15,
+      "name": "이자·배당",
+      "type": "income",
+      "color": "#66BB6A"
+    },
+    {
+      "id": 16,
+      "name": "용돈·기타수입",
+      "type": "income",
+      "color": "#81C784"
+    }
   ],
   "userSettings": [
     {

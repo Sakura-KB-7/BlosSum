@@ -1,10 +1,9 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { http } from '@/api/http';
-import type { UserSettingsRow } from '@/types/models';
 
 export const useProfileStore = defineStore('profile', () => {
-  const rows = ref<UserSettingsRow[]>([]);
+  const rows = ref([]);
   const loading = ref(false);
 
   const profile = computed(() => rows.value[0] ?? null);
@@ -12,19 +11,17 @@ export const useProfileStore = defineStore('profile', () => {
   async function fetchAll() {
     loading.value = true;
     try {
-      const { data } = await http.get<UserSettingsRow[]>('/userSettings');
+      const { data } = await http.get('/userSettings');
       rows.value = Array.isArray(data) ? data : [];
     } finally {
       loading.value = false;
     }
   }
 
-  async function save(
-    partial: Pick<UserSettingsRow, 'name' | 'email' | 'monthlyBudget' | 'currency'>
-  ) {
+  async function save(partial) {
     const current = profile.value;
     if (current) {
-      const { data } = await http.put<UserSettingsRow>(`/userSettings/${current.id}`, {
+      const { data } = await http.put(`/userSettings/${current.id}`, {
         ...current,
         ...partial,
       });
@@ -32,7 +29,7 @@ export const useProfileStore = defineStore('profile', () => {
       if (i >= 0) rows.value[i] = data;
       return data;
     }
-    const { data } = await http.post<UserSettingsRow>('/userSettings', {
+    const { data } = await http.post('/userSettings', {
       id: 1,
       name: partial.name ?? 'admin',
       email: partial.email ?? '',

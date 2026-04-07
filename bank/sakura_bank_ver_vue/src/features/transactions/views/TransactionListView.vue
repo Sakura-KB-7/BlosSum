@@ -1,18 +1,17 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
-import type { BudgetType } from '@/types/models';
 
 const budget = useBudgetStore();
 const categories = useCategoryStore();
 const router = useRouter();
 
-const typeFilter = ref<BudgetType | ''>('');
-const categoryFilter = ref<number | ''>('');
+const typeFilter = ref('');
+const categoryFilter = ref('');
 const from = ref('');
 const to = ref('');
 
@@ -20,7 +19,7 @@ onMounted(async () => {
   await Promise.all([budget.fetchAll(), categories.fetchAll()]);
 });
 
-function categoryName(categoryId: number) {
+function categoryName(categoryId) {
   const all = [...categories.income, ...categories.expense];
   return all.find((c) => c.id === categoryId)?.name ?? `id:${categoryId}`;
 }
@@ -28,7 +27,10 @@ function categoryName(categoryId: number) {
 const rows = computed(() =>
   budget.filtered({
     type: typeFilter.value,
-    categoryId: categoryFilter.value === '' ? undefined : categoryFilter.value,
+    categoryId:
+      categoryFilter.value === '' || categoryFilter.value === undefined
+        ? undefined
+        : Number(categoryFilter.value),
     from: from.value || undefined,
     to: to.value || undefined,
   })
@@ -40,16 +42,16 @@ const categoryOptions = computed(() => {
   return [...categories.income, ...categories.expense];
 });
 
-function won(n: number) {
+function won(n) {
   return new Intl.NumberFormat('ko-KR').format(n) + '원';
 }
 
-async function onDelete(id: string | number) {
+async function onDelete(id) {
   if (!confirm('이 거래를 삭제할까요?')) return;
   await budget.removeRow(String(id));
 }
 
-function onEdit(id: string | number) {
+function onEdit(id) {
   router.push({ name: 'transaction-edit', params: { id: String(id) } });
 }
 </script>
