@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { cn } from '@/shared/lib/utils';

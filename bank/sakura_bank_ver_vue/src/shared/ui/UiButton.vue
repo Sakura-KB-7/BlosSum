@@ -1,15 +1,12 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/shared/lib/utils';
 
-const props = withDefaults(
-  defineProps<{
-    variant?: 'default' | 'outline' | 'ghost';
-    size?: 'default' | 'sm' | 'icon';
-    type?: 'button' | 'submit' | 'reset';
-    class?: string;
-  }>(),
-  { variant: 'default', size: 'default', type: 'button' }
-);
+const props = defineProps({
+  variant: { type: String, default: 'default' },
+  size: { type: String, default: 'default' },
+  type: { type: String, default: 'button' },
+  class: { type: String, default: undefined },
+});
 </script>
 
 <template>

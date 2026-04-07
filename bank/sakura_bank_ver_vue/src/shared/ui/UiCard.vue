@@ -1,7 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/shared/lib/utils';
 
-const props = defineProps<{ class?: string }>();
+const props = defineProps({
+  class: { type: String, default: undefined },
+});
 </script>
 
 <template>

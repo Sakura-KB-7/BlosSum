@@ -1,20 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 
-interface Petal {
-  x: number;
-  y: number;
-  size: number;
-  speedX: number;
-  speedY: number;
-  rotation: number;
-  rotationSpeed: number;
-  opacity: number;
-}
-
-const canvasRef = ref<HTMLCanvasElement | null>(null);
+const canvasRef = ref(null);
 let rafId = 0;
-let teardown: (() => void) | null = null;
+let teardown = null;
 
 onMounted(() => {
   const canvas = canvasRef.value;
@@ -29,7 +18,7 @@ onMounted(() => {
   resize();
   window.addEventListener('resize', resize);
 
-  const petals: Petal[] = [];
+  const petals = [];
   for (let i = 0; i < 25; i++) {
     petals.push({
       x: Math.random() * canvas.width,
@@ -43,7 +32,7 @@ onMounted(() => {
     });
   }
 
-  const drawPetal = (petal: Petal) => {
+  const drawPetal = (petal) => {
     ctx.save();
     ctx.translate(petal.x, petal.y);
     ctx.rotate(petal.rotation);
