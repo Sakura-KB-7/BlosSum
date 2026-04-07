@@ -1,0 +1,45 @@
+{
+  "budget": [
+    {
+      "id": "1",
+      "date": "2026-04-03",
+      "type": "expense",
+      "category": "식비",
+      "detailCategory": "커피",
+      "amount": 4500,
+      "memo": "카페"
+    },
+    {
+      "id": "2",
+      "date": "2026-04-01",
+      "type": "income",
+      "category": "월급",
+      "detailCategory": "",
+      "amount": 3200000,
+      "memo": "4월 급여"
+    }
+  ],
+  "incomeCategory": [
+    { "id": "1", "name": "월급" },
+    { "id": "2", "name": "용돈" },
+    { "id": "3", "name": "이자" },
+    { "id": "4", "name": "기타수입" }
+  ],
+  "expenseCategory": [
+    { "id": "1", "name": "식비" },
+    { "id": "2", "name": "교통비" },
+    { "id": "3", "name": "문화" },
+    { "id": "4", "name": "쇼핑" },
+    { "id": "5", "name": "의료" },
+    { "id": "6", "name": "공과금" },
+    { "id": "7", "name": "기타" }
+  ],
+  "periodicExpense": [],
+  "profiles": [
+    {
+      "id": "1",
+      "name": "사용자",
+      "email": "user@example.com"
+    }
+  ]
+}
