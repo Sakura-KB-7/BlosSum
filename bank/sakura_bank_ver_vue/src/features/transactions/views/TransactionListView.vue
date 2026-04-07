@@ -12,7 +12,7 @@ const categories = useCategoryStore();
 const router = useRouter();
 
 const typeFilter = ref<BudgetType | ''>('');
-const categoryFilter = ref('');
+const categoryFilter = ref<number | ''>('');
 const from = ref('');
 const to = ref('');
 
@@ -20,32 +20,37 @@ onMounted(async () => {
   await Promise.all([budget.fetchAll(), categories.fetchAll()]);
 });
 
+function categoryName(categoryId: number) {
+  const all = [...categories.income, ...categories.expense];
+  return all.find((c) => c.id === categoryId)?.name ?? `id:${categoryId}`;
+}
+
 const rows = computed(() =>
   budget.filtered({
     type: typeFilter.value,
-    category: categoryFilter.value || undefined,
+    categoryId: categoryFilter.value === '' ? undefined : categoryFilter.value,
     from: from.value || undefined,
     to: to.value || undefined,
   })
 );
 
 const categoryOptions = computed(() => {
-  if (typeFilter.value === 'income') return categories.income.map((c) => c.name);
-  if (typeFilter.value === 'expense') return categories.expense.map((c) => c.name);
-  return [...categories.income.map((c) => c.name), ...categories.expense.map((c) => c.name)];
+  if (typeFilter.value === 'income') return categories.income;
+  if (typeFilter.value === 'expense') return categories.expense;
+  return [...categories.income, ...categories.expense];
 });
 
 function won(n: number) {
   return new Intl.NumberFormat('ko-KR').format(n) + '원';
 }
 
-async function onDelete(id: string) {
+async function onDelete(id: string | number) {
   if (!confirm('이 거래를 삭제할까요?')) return;
-  await budget.removeRow(id);
+  await budget.removeRow(String(id));
 }
 
-function onEdit(id: string) {
-  router.push({ name: 'transaction-edit', params: { id } });
+function onEdit(id: string | number) {
+  router.push({ name: 'transaction-edit', params: { id: String(id) } });
 }
 </script>
 
@@ -76,14 +81,14 @@ function onEdit(id: string) {
             <option value="expense">지출</option>
           </select>
         </div>
-        <div class="flex min-w-[140px] flex-col gap-1">
+        <div class="flex min-w-[160px] flex-col gap-1">
           <label class="text-xs text-muted-foreground">카테고리</label>
           <select
             v-model="categoryFilter"
             class="rounded-lg border border-input bg-background px-3 py-2 text-sm"
           >
             <option value="">전체</option>
-            <option v-for="c in categoryOptions" :key="c" :value="c">{{ c }}</option>
+            <option v-for="c in categoryOptions" :key="c.id" :value="c.id">{{ c.name }}</option>
           </select>
         </div>
         <div class="flex min-w-[140px] flex-col gap-1">
@@ -118,6 +123,7 @@ function onEdit(id: string) {
               <th class="px-3 py-2 font-medium">날짜</th>
               <th class="px-3 py-2 font-medium">구분</th>
               <th class="px-3 py-2 font-medium">카테고리</th>
+              <th class="px-3 py-2 font-medium">제목</th>
               <th class="px-3 py-2 font-medium">금액</th>
               <th class="px-3 py-2 font-medium">메모</th>
               <th class="px-3 py-2 font-medium" />
@@ -127,9 +133,10 @@ function onEdit(id: string) {
             <tr v-for="r in rows" :key="r.id" class="border-b border-border/60">
               <td class="px-3 py-2">{{ r.date }}</td>
               <td class="px-3 py-2">{{ r.type === 'income' ? '수입' : '지출' }}</td>
-              <td class="px-3 py-2">{{ r.category }}</td>
+              <td class="px-3 py-2">{{ categoryName(r.categoryId) }}</td>
+              <td class="max-w-[180px] truncate px-3 py-2">{{ r.title }}</td>
               <td class="px-3 py-2 font-medium">{{ won(r.amount) }}</td>
-              <td class="max-w-[200px] truncate px-3 py-2 text-muted-foreground">{{ r.memo }}</td>
+              <td class="max-w-[160px] truncate px-3 py-2 text-muted-foreground">{{ r.memo }}</td>
               <td class="whitespace-nowrap px-3 py-2 text-right">
                 <UiButton variant="ghost" size="sm" class="text-primary" @click="onEdit(r.id)"
                   >수정</UiButton

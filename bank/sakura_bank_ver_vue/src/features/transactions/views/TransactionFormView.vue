@@ -5,7 +5,7 @@ import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
-import type { BudgetType } from '@/types/models';
+import type { BudgetType, PaymentMethod, RecordRow } from '@/types/models';
 
 const route = useRoute();
 const router = useRouter();
@@ -16,30 +16,33 @@ const isEdit = computed(() => typeof route.params.id === 'string' && route.param
 
 const date = ref('');
 const type = ref<BudgetType>('expense');
-const category = ref('');
-const detailCategory = ref('');
+/** select는 문자열/숫자 혼재 가능 */
+const categoryId = ref<string | number>('');
+const title = ref('');
 const amount = ref<number | null>(null);
+const paymentMethod = ref<PaymentMethod>('card');
 const memo = ref('');
+const isFixed = ref(false);
+const recurringDay = ref<number | null>(null);
 const saving = ref(false);
 
 const categoryList = computed(() =>
   type.value === 'income' ? categories.income : categories.expense
 );
 
-function newId() {
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
 function loadFromRow() {
   const id = route.params.id as string;
-  const row = budget.items.find((x) => x.id === id);
+  const row = budget.items.find((x) => String(x.id) === id);
   if (!row) return;
   date.value = row.date;
   type.value = row.type;
-  category.value = row.category;
-  detailCategory.value = row.detailCategory;
+  categoryId.value = row.categoryId;
+  title.value = row.title;
   amount.value = row.amount;
+  paymentMethod.value = row.paymentMethod;
   memo.value = row.memo;
+  isFixed.value = row.isFixed;
+  recurringDay.value = row.recurringDay ?? null;
 }
 
 onMounted(async () => {
@@ -56,35 +59,52 @@ watch(
 );
 
 watch(type, () => {
-  category.value = '';
+  categoryId.value = '';
 });
+
+function parseCategoryId(): number {
+  const v = categoryId.value;
+  if (v === '' || v === null || v === undefined) return NaN;
+  return typeof v === 'number' ? v : Number(v);
+}
+
+function buildPayload(): Omit<RecordRow, 'id'> {
+  const base: Omit<RecordRow, 'id'> = {
+    type: type.value,
+    date: date.value,
+    categoryId: parseCategoryId(),
+    title: title.value.trim(),
+    amount: Number(amount.value),
+    paymentMethod: paymentMethod.value,
+    memo: memo.value || '',
+    isFixed: isFixed.value,
+  };
+  if (isFixed.value && recurringDay.value != null && !Number.isNaN(recurringDay.value)) {
+    base.recurringDay = recurringDay.value;
+  }
+  return base;
+}
 
 async function onSubmit() {
   if (!date.value || amount.value == null || Number.isNaN(amount.value)) {
     alert('날짜와 금액을 입력해 주세요.');
     return;
   }
-  if (!category.value) {
+  if (categoryId.value === '' || Number.isNaN(parseCategoryId())) {
     alert('카테고리를 선택해 주세요.');
+    return;
+  }
+  if (!title.value.trim()) {
+    alert('제목을 입력해 주세요.');
     return;
   }
   saving.value = true;
   try {
-    const payload = {
-      date: date.value,
-      type: type.value,
-      category: category.value,
-      detailCategory: detailCategory.value || '',
-      amount: Number(amount.value),
-      memo: memo.value || '',
-    };
+    const payload = buildPayload();
     if (isEdit.value) {
       await budget.updateRow(route.params.id as string, payload);
     } else {
-      await budget.createRow({
-        id: newId(),
-        ...payload,
-      });
+      await budget.createRow(payload);
     }
     router.push({ name: 'transactions' });
   } finally {
@@ -101,7 +121,7 @@ function onCancel() {
   <div class="space-y-6">
     <div>
       <h1 class="text-2xl font-bold text-foreground">{{ isEdit ? '거래 수정' : '거래 등록' }}</h1>
-      <p class="text-muted-foreground">날짜·금액·카테고리·메모를 입력하고 저장하세요.</p>
+      <p class="text-muted-foreground">날짜·금액·카테고리·제목을 입력하고 저장하세요.</p>
     </div>
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
@@ -131,25 +151,39 @@ function onCancel() {
           <label class="text-xs font-semibold text-foreground" for="c">카테고리</label>
           <select
             id="c"
-            v-model="category"
+            v-model="categoryId"
             required
             class="rounded-lg border border-input bg-background px-3 py-2"
           >
             <option disabled value="">선택</option>
-            <option v-for="opt in categoryList" :key="opt.id" :value="opt.name">
+            <option v-for="opt in categoryList" :key="opt.id" :value="opt.id">
               {{ opt.name }}
             </option>
           </select>
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="dc">세부 카테고리 (선택)</label>
+          <label class="text-xs font-semibold text-foreground" for="ti">제목</label>
           <input
-            id="dc"
-            v-model="detailCategory"
+            id="ti"
+            v-model="title"
             type="text"
-            placeholder="예: 커피"
+            placeholder="예: 점심 식사"
+            required
             class="rounded-lg border border-input bg-background px-3 py-2"
           />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-foreground" for="pm">결제 수단</label>
+          <select
+            id="pm"
+            v-model="paymentMethod"
+            class="rounded-lg border border-input bg-background px-3 py-2"
+          >
+            <option value="card">카드</option>
+            <option value="transfer">계좌이체</option>
+            <option value="cash">현금</option>
+            <option value="other">기타</option>
+          </select>
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-xs font-semibold text-foreground" for="a">금액</label>
@@ -170,6 +204,22 @@ function onCancel() {
             v-model="memo"
             rows="3"
             placeholder="메모"
+            class="rounded-lg border border-input bg-background px-3 py-2"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          <input id="fx" v-model="isFixed" type="checkbox" class="rounded border-input" />
+          <label class="text-sm text-foreground" for="fx">고정 수입·지출</label>
+        </div>
+        <div v-if="isFixed" class="flex flex-col gap-1">
+          <label class="text-xs font-semibold text-foreground" for="rd">반복일 (매월)</label>
+          <input
+            id="rd"
+            v-model.number="recurringDay"
+            type="number"
+            min="1"
+            max="31"
+            placeholder="1–31"
             class="rounded-lg border border-input bg-background px-3 py-2"
           />
         </div>

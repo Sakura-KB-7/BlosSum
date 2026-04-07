@@ -1,20 +1,30 @@
 export type BudgetType = 'income' | 'expense';
 
-/** 과제 샘플 필드명 정렬 (detailCategory, amount). id는 문자열. */
-export interface BudgetRow {
-  id: string;
-  date: string;
+export type PaymentMethod = 'card' | 'transfer' | 'cash' | 'other';
+
+/** json-server `/records` 한 줄 */
+export interface RecordRow {
+  id: number | string;
   type: BudgetType;
-  category: string;
-  detailCategory: string;
+  date: string;
+  categoryId: number;
+  title: string;
   amount: number;
+  paymentMethod: PaymentMethod;
   memo: string;
+  isFixed: boolean;
+  recurringDay?: number;
 }
 
-/** 가이드의 incomeCategory / expenseCategory: 문자열 배열 대신 json-server용 객체 배열 권장 */
+/** 하위 호환: 거래 스토어에서 사용 */
+export type BudgetRow = RecordRow;
+
+/** json-server `/categories` */
 export interface CategoryItem {
-  id: string;
+  id: number;
   name: string;
+  type: BudgetType;
+  color: string;
 }
 
 export interface PeriodicExpenseRow {
@@ -24,6 +34,15 @@ export interface PeriodicExpenseRow {
   category: string;
   amount: number;
   memo: string;
+}
+
+/** json-server `/userSettings` (단일 행 권장) */
+export interface UserSettingsRow {
+  id: number;
+  name: string;
+  email: string;
+  monthlyBudget: number;
+  currency: string;
 }
 
 export interface ProfileRow {

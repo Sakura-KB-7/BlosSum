@@ -1,0 +1,10 @@
+{
+  "name": "blossum",
+  "private": true,
+  "description": "MoneyBlosSum — Vue 앱은 bank/sakura_bank_ver_vue 에 있습니다.",
+  "scripts": {
+    "dev": "npm run dev --prefix bank/sakura_bank_ver_vue",
+    "build": "npm run build --prefix bank/sakura_bank_ver_vue",
+    "install:web": "npm install --prefix bank/sakura_bank_ver_vue"
+  }
+}
