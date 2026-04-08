@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   List,
-  PlusCircle,
   Settings,
   BarChart3,
 } from 'lucide-vue-next';
@@ -36,7 +35,6 @@ const navItems = [
 
 const extraItems = [
   { id: 'transactions', label: '거래 내역', to: '/transactions', icon: List },
-  { id: 'transaction-new', label: '거래 등록', to: '/transactions/new', icon: PlusCircle },
   { id: 'settings', label: '설정', to: '/settings', icon: Settings },
 ];
 
@@ -49,7 +47,6 @@ function isMainActive(to) {
 function isExtraActive(item) {
   if (item.to === '/transactions')
     return route.name === 'transactions' || route.name === 'transaction-edit';
-  if (item.to === '/transactions/new') return route.name === 'transaction-new';
   return route.path === item.to;
 }
 

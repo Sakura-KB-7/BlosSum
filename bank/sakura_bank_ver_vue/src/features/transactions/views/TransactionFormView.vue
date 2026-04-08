@@ -28,6 +28,23 @@ const categoryList = computed(() =>
   type.value === 'income' ? categories.income : categories.expense
 );
 
+function applyTypeFromQuery() {
+  if (isEdit.value) return;
+  const qType = route.query.type;
+  if (qType === 'income' || qType === 'expense') {
+    type.value = qType;
+    categoryId.value = '';
+  }
+}
+
+function applyDateFromQuery() {
+  if (isEdit.value) return;
+  const qDate = route.query.date;
+  if (typeof qDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(qDate)) {
+    date.value = qDate;
+  }
+}
+
 function loadFromRow() {
   const id = route.params.id;
   const row = budget.items.find((x) => String(x.id) === id);
@@ -46,13 +63,31 @@ function loadFromRow() {
 onMounted(async () => {
   await Promise.all([budget.fetchAll(), categories.fetchAll()]);
   if (isEdit.value) loadFromRow();
-  else if (!date.value) date.value = new Date().toISOString().slice(0, 10);
+  else {
+    applyTypeFromQuery();
+    applyDateFromQuery();
+    if (!date.value) date.value = new Date().toISOString().slice(0, 10);
+  }
 });
 
 watch(
   () => route.params.id,
   () => {
     if (isEdit.value) loadFromRow();
+  }
+);
+
+watch(
+  () => route.query.type,
+  () => {
+    applyTypeFromQuery();
+  }
+);
+
+watch(
+  () => route.query.date,
+  () => {
+    applyDateFromQuery();
   }
 );
 
