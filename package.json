@@ -6,5 +6,9 @@
     "dev": "npm run dev --prefix bank/sakura_bank_ver_vue",
     "build": "npm run build --prefix bank/sakura_bank_ver_vue",
     "install:web": "npm install --prefix bank/sakura_bank_ver_vue"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "vue-chartjs": "^5.3.3"
   }
 }

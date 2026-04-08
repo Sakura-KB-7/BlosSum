@@ -1,8 +1,10 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { http } from '@/api/http';
+import { useAuthStore } from '@/stores/auth';
 
 export const useProfileStore = defineStore('profile', () => {
+  const auth = useAuthStore();
   const rows = ref([]);
   const loading = ref(false);
 
@@ -11,7 +13,14 @@ export const useProfileStore = defineStore('profile', () => {
   async function fetchAll() {
     loading.value = true;
     try {
-      const { data } = await http.get('/userSettings');
+      if (!auth.currentUserId) {
+        rows.value = [];
+        return;
+      }
+
+      const { data } = await http.get('/userSettings', {
+        params: { userId: auth.currentUserId },
+      });
       rows.value = Array.isArray(data) ? data : [];
     } finally {
       loading.value = false;
@@ -30,8 +39,8 @@ export const useProfileStore = defineStore('profile', () => {
       return data;
     }
     const { data } = await http.post('/userSettings', {
-      id: 1,
-      name: partial.name ?? 'admin',
+      userId: auth.currentUserId,
+      name: partial.name ?? auth.currentUserId,
       email: partial.email ?? '',
       monthlyBudget: partial.monthlyBudget ?? 3_000_000,
       currency: partial.currency ?? 'KRW',

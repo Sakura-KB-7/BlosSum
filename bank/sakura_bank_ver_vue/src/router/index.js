@@ -1,14 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import SpringWalletLayout from '@/layouts/SpringWalletLayout.vue';
+import { useAuthStore } from '@/stores/auth';
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/login/LoginView.vue'),
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('@/login/SignUpView.vue'),
+    },
     {
       path: '/',
       component: SpringWalletLayout,
       children: [
-        { path: '', redirect: { name: 'dashboard' } },
+        { path: '', redirect: { name: 'login' } },
         {
           path: 'dashboard',
           name: 'dashboard',
@@ -61,6 +72,23 @@ export default createRouter({
         },
       ],
     },
-    { path: '/:pathMatch(.*)*', redirect: { name: 'dashboard' } },
+    { path: '/:pathMatch(.*)*', redirect: { name: 'login' } },
   ],
 });
+
+router.beforeEach((to) => {
+  const auth = useAuthStore();
+  const isAuthPage = to.name === 'login' || to.name === 'signup';
+
+  if (!auth.isAuthenticated && !isAuthPage) {
+    return { name: 'login' };
+  }
+
+  if (auth.isAuthenticated && isAuthPage) {
+    return { name: 'dashboard' };
+  }
+
+  return true;
+});
+
+export default router;

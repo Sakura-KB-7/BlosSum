@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { http } from '@/api/http';
+import { useAuthStore } from '@/stores/auth';
 
 function sameMonth(dateIso, y, m) {
   const d = new Date(dateIso);
@@ -12,6 +13,7 @@ function idPart(id) {
 }
 
 export const useBudgetStore = defineStore('budget', () => {
+  const auth = useAuthStore();
   const items = ref([]);
   const loading = ref(false);
   const error = ref(null);
@@ -20,7 +22,14 @@ export const useBudgetStore = defineStore('budget', () => {
     loading.value = true;
     error.value = null;
     try {
-      const { data } = await http.get('/records');
+      if (!auth.currentUserId) {
+        items.value = [];
+        return;
+      }
+
+      const { data } = await http.get('/records', {
+        params: { userId: auth.currentUserId },
+      });
       items.value = Array.isArray(data) ? data : [];
     } catch (e) {
       error.value = '거래 내역을 불러오지 못했습니다. json-server가 켜져 있는지 확인하세요.';
@@ -31,7 +40,10 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function createRow(body) {
-    const { data } = await http.post('/records', body);
+    const { data } = await http.post('/records', {
+      ...body,
+      userId: auth.currentUserId,
+    });
     items.value.unshift(data);
     return data;
   }
