@@ -12,6 +12,7 @@ import {
   List,
   PlusCircle,
   Settings,
+  BarChart3,
 } from 'lucide-vue-next';
 import { cn } from '@/shared/lib/utils';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
@@ -27,6 +28,7 @@ const profile = useProfileStore();
 const navItems = [
   { id: 'dashboard', label: '내 지갑', to: '/dashboard', icon: Home },
   { id: 'calendar', label: '캘린더 가계부', to: '/calendar', icon: Calendar },
+  { id: 'statistics', label: '소비 통계', to: '/statistics', icon: BarChart3 },
   { id: 'charms', label: '부적 콜렉션', to: '/charms', icon: Sparkles },
   { id: 'map', label: '소비 지도', to: '/map', icon: Map },
   { id: 'newsletter', label: 'AI 소식지', to: '/newsletter', icon: Newspaper },

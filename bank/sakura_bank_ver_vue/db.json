@@ -121,6 +121,69 @@
       "memo": "해물짬뽕",
       "isFixed": false,
       "id": 11
+    },
+    {
+      "id": 12,
+      "type": "income",
+      "date": "2026-02-10",
+      "categoryId": 14,
+      "title": "2월 급여",
+      "amount": 2800000,
+      "isFixed": true
+    },
+    {
+      "id": 13,
+      "type": "expense",
+      "date": "2026-02-15",
+      "categoryId": 1,
+      "title": "외식",
+      "amount": 120000,
+      "isFixed": false
+    },
+    {
+      "id": 14,
+      "type": "expense",
+      "date": "2026-02-25",
+      "categoryId": 7,
+      "title": "월세",
+      "amount": 500000,
+      "isFixed": true
+    },
+    {
+      "id": 15,
+      "type": "income",
+      "date": "2026-03-10",
+      "categoryId": 14,
+      "title": "3월 급여",
+      "amount": 2900000,
+      "isFixed": true
+    },
+    {
+      "id": 16,
+      "type": "expense",
+      "date": "2026-03-12",
+      "categoryId": 9,
+      "title": "봄옷 쇼핑",
+      "amount": 250000,
+      "isFixed": false
+    },
+    {
+      "id": 17,
+      "type": "expense",
+      "date": "2026-03-25",
+      "categoryId": 7,
+      "title": "월세",
+      "amount": 500000,
+      "isFixed": true
+    },
+    {
+      "id": 18,
+      "type": "expense",
+      "date": "2026-03-05",
+      "categoryId": 3,
+      "title": "교통비",
+      "amount": 55000,
+      "isFixed": false
     }
   ],
   "categories": [
@@ -128,97 +191,97 @@
       "id": 1,
       "name": "식비",
       "type": "expense",
-      "color": "#FF6384"
+      "color": "#F48FB1"
     },
     {
       "id": 2,
       "name": "공과금",
       "type": "expense",
-      "color": "#36A2EB"
+      "color": "#90CAF9"
     },
     {
       "id": 3,
       "name": "교통",
       "type": "expense",
-      "color": "#FFCE56"
+      "color": "#FFCC80"
     },
     {
       "id": 4,
       "name": "문화생활",
       "type": "expense",
-      "color": "#4BC0C0"
+      "color": "#A5D6A7"
     },
     {
       "id": 5,
       "name": "의료",
       "type": "expense",
-      "color": "#9966FF"
+      "color": "#B39DDB"
     },
     {
       "id": 6,
       "name": "교육",
       "type": "expense",
-      "color": "#FF9F40"
+      "color": "#FFF59D"
     },
     {
       "id": 7,
       "name": "주거",
       "type": "expense",
-      "color": "#C9CBCF"
+      "color": "#CE93D8"
     },
     {
       "id": 8,
       "name": "외식",
       "type": "expense",
-      "color": "#7E57C2"
+      "color": "#EF9A9A"
     },
     {
       "id": 9,
       "name": "쇼핑",
       "type": "expense",
-      "color": "#EC407A"
+      "color": "#81DEEA"
     },
     {
       "id": 10,
       "name": "미용",
       "type": "expense",
-      "color": "#26A69A"
+      "color": "#C5E1A5"
     },
     {
       "id": 11,
       "name": "경조사",
       "type": "expense",
-      "color": "#D4E157"
+      "color": "#FFE082"
     },
     {
       "id": 12,
       "name": "자녀교육",
       "type": "expense",
-      "color": "#FFEE58"
+      "color": "#BCAAA4"
     },
     {
       "id": 13,
       "name": "기타",
       "type": "expense",
-      "color": "#BDBDBD"
+      "color": "#B0BEC5"
     },
     {
       "id": 14,
       "name": "월급",
       "type": "income",
-      "color": "#4CAF50"
+      "color": "#A5D6A7"
     },
     {
       "id": 15,
       "name": "이자·배당",
       "type": "income",
-      "color": "#66BB6A"
+      "color": "#80CBC4"
     },
     {
       "id": 16,
       "name": "용돈·기타수입",
       "type": "income",
-      "color": "#81C784"
+      "color": "#E6EE9C"
     }
   ],
   "userSettings": [
