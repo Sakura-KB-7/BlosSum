@@ -54,6 +54,11 @@ export default createRouter({
           name: 'settings',
           component: () => import('@/views/SettingsView.vue'),
         },
+        {
+          path: '/statistics',
+          name: 'Statistics',
+          component: () => import('@/views/StatisticsView.vue'),
+        },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: { name: 'dashboard' } },
