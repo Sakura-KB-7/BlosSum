@@ -63,7 +63,7 @@ const router = createRouter({
         {
           path: 'map',
           name: 'map',
-          component: () => import('@/views/MapView.vue'),
+          component: () => import('@/map/views/MapView.vue'),
         },
         {
           path: 'newsletter',
