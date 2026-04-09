@@ -2,6 +2,7 @@
   "records": [
     {
       "id": 1,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-07",
       "categoryId": 1,
@@ -13,6 +14,7 @@
     },
     {
       "id": 2,
+      "userId": "admin",
       "type": "income",
       "date": "2026-04-01",
       "categoryId": 14,
@@ -24,6 +26,7 @@
     },
     {
       "id": 3,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-25",
       "categoryId": 7,
@@ -36,6 +39,7 @@
     },
     {
       "id": 4,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-05",
       "categoryId": 3,
@@ -47,6 +51,7 @@
     },
     {
       "id": 5,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-06",
       "categoryId": 2,
@@ -58,6 +63,7 @@
     },
     {
       "id": 6,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-08",
       "categoryId": 8,
@@ -69,6 +75,7 @@
     },
     {
       "id": 7,
+      "userId": "admin",
       "type": "income",
       "date": "2026-04-10",
       "categoryId": 15,
@@ -80,6 +87,7 @@
     },
     {
       "id": 8,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-09",
       "categoryId": 9,
@@ -91,6 +99,7 @@
     },
     {
       "id": 9,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-04",
       "categoryId": 5,
@@ -102,6 +111,7 @@
     },
     {
       "id": 10,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-02",
       "categoryId": 4,
@@ -112,6 +122,7 @@
       "isFixed": false
     },
     {
+      "userId": "admin",
       "type": "expense",
       "date": "2026-04-07",
       "categoryId": 1,
@@ -124,6 +135,7 @@
     },
     {
       "id": 12,
+      "userId": "admin",
       "type": "income",
       "date": "2026-02-10",
       "categoryId": 14,
@@ -133,6 +145,7 @@
     },
     {
       "id": 13,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-02-15",
       "categoryId": 1,
@@ -142,6 +155,7 @@
     },
     {
       "id": 14,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-02-25",
       "categoryId": 7,
@@ -151,6 +165,7 @@
     },
     {
       "id": 15,
+      "userId": "admin",
       "type": "income",
       "date": "2026-03-10",
       "categoryId": 14,
@@ -160,6 +175,7 @@
     },
     {
       "id": 16,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-03-12",
       "categoryId": 9,
@@ -169,6 +185,7 @@
     },
     {
       "id": 17,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-03-25",
       "categoryId": 7,
@@ -178,6 +195,7 @@
     },
     {
       "id": 18,
+      "userId": "admin",
       "type": "expense",
       "date": "2026-03-05",
       "categoryId": 3,
@@ -320,10 +338,36 @@
   "userSettings": [
     {
       "id": 1,
+      "userId": "admin",
       "name": "admin",
       "email": "user@example.com",
       "monthlyBudget": 3000000,
       "currency": "KRW"
+    },
+    {
+      "userId": "aaaa",
+      "name": "aaaa",
+      "email": "",
+      "monthlyBudget": 3000000,
+      "currency": "KRW",
+      "id": 2
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "userId": "admin",
+      "password": "1234"
+    },
+    {
+      "userId": "dd",
+      "password": "1234",
+      "id": 2
+    },
+    {
+      "userId": "aaaa",
+      "password": "1234",
+      "id": 3
     }
   ]
 }

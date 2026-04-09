@@ -4,6 +4,7 @@ import axios from 'axios';
 import { BarChart3, PieChart as PieIcon } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/stores/auth';
 
 // 차트 컴포넌트 (막대, 원형)
 import BarChart from '@/components/statistics/BarChart.vue';
@@ -13,6 +14,7 @@ import PieChart from '@/components/statistics/PieChart.vue';
 const barData = ref(null); // 월별 수입/지출 차트 데이터
 const pieData = ref(null); // 카테고리별 지출 차트 데이터
 const rawCategories = ref([]); // 카테고리 원본 데이터
+const auth = useAuthStore();
 
 // 원형 차트 우측에 표시할 카테고리 리스트
 // - labels, data, colors를 객체로 묶음
@@ -42,7 +44,9 @@ const fetchData = async () => {
       axios.get('http://localhost:3000/categories'),
     ]);
 
-    const records = recordRes.data;
+    const records = (Array.isArray(recordRes.data) ? recordRes.data : []).filter(
+      (record) => record.userId === auth.currentUserId
+    );
     rawCategories.value = categoryRes.data;
 
     // 최근 6개월 추이 데이터 가공
