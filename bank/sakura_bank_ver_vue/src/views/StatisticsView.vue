@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
 import { BarChart3, PieChart as PieIcon } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/stores/auth';
+import { http } from '@/api/http';
 
 // 차트 컴포넌트 (막대, 원형)
 import BarChart from '@/components/statistics/BarChart.vue';
@@ -40,8 +40,8 @@ const categoryList = computed(() => {
 const fetchData = async () => {
   try {
     const [recordRes, categoryRes] = await Promise.all([
-      axios.get('http://localhost:3000/records'),
-      axios.get('http://localhost:3000/categories'),
+      http.get('/records'),
+      http.get('/categories'),
     ]);
 
     const records = (Array.isArray(recordRes.data) ? recordRes.data : []).filter(
@@ -120,8 +120,9 @@ const fetchData = async () => {
 
     // 현재 달의 카테고리별 지출 데이터 가공
     // 현재 월 지출 데이터 필터링
+    const currentMonth = String(new Date().getMonth() + 1).padStart(2, '0');
     const currentExpenses = records.filter(
-      (r) => r.type === 'expense' && r.date.includes('-04-'),
+      (r) => r.type === 'expense' && r.date.split('-')[1] === currentMonth
     );
 
     // 카테고리 id -> 객체 매핑
@@ -251,17 +252,11 @@ onMounted(fetchData);
       <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm">
         <div class="flex items-center gap-2 p-6 pb-2">
           <BarChart3 class="h-5 w-5 text-primary" />
-          <h2 class="text-lg font-semibold text-foreground">
-            월별 수입/지출 추이
-          </h2>
+          <h2 class="text-lg font-semibold text-foreground">월별 수입/지출 추이</h2>
         </div>
         <div class="p-6">
           <div class="h-[300px] w-full">
-            <BarChart
-              v-if="barData"
-              :chart-data="barData"
-              :chart-options="barOptions"
-            />
+            <BarChart v-if="barData" :chart-data="barData" :chart-options="barOptions" />
           </div>
         </div>
       </UiCard>
@@ -275,11 +270,7 @@ onMounted(fetchData);
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
           <div class="h-[300px]">
-            <PieChart
-              v-if="pieData"
-              :chart-data="pieData"
-              :chart-options="pieOptions"
-            />
+            <PieChart v-if="pieData" :chart-data="pieData" :chart-options="pieOptions" />
           </div>
 
           <div class="flex flex-col justify-center space-y-4">
@@ -289,15 +280,10 @@ onMounted(fetchData);
               class="flex items-center justify-between border-b border-border/50 pb-2 last:border-0"
             >
               <div class="flex items-center gap-3">
-                <span
-                  class="h-3 w-3 rounded-full"
-                  :style="{ backgroundColor: item.color }"
-                ></span>
+                <span class="h-3 w-3 rounded-full" :style="{ backgroundColor: item.color }"></span>
                 <span class="font-medium text-foreground">{{ item.name }}</span>
               </div>
-              <span class="font-bold text-foreground"
-                >{{ item.amount.toLocaleString() }}원</span
-              >
+              <span class="font-bold text-foreground">{{ item.amount.toLocaleString() }}원</span>
             </div>
           </div>
         </div>
