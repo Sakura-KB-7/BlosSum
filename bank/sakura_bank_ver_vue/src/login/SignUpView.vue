@@ -18,7 +18,10 @@ const successMessage = ref('');
 const saving = ref(false);
 
 const isFormValid = computed(
-  () => userId.value.trim() && password.value.trim() && confirmPassword.value.trim()
+  () =>
+    userId.value.trim() &&
+    password.value.trim() &&
+    confirmPassword.value.trim(),
 );
 
 async function onSubmit() {
@@ -58,15 +61,19 @@ async function onSubmit() {
       userId: trimmedUserId,
       name: trimmedUserId,
       email: '',
-      monthlyBudget: 3000000,
+      monthlyBudget: 0,
       currency: 'KRW',
     });
 
     successMessage.value = '아이디가 만들어졌습니다. 로그인해 주세요.';
     auth.logout();
-    router.push({ name: 'login', query: { userId: trimmedUserId, created: '1' } });
+    router.push({
+      name: 'login',
+      query: { userId: trimmedUserId, created: '1' },
+    });
   } catch (error) {
-    errorMessage.value = '아이디를 만들지 못했습니다. json-server 상태를 확인하세요.';
+    errorMessage.value =
+      '아이디를 만들지 못했습니다. json-server 상태를 확인하세요.';
   } finally {
     saving.value = false;
   }
@@ -80,24 +87,36 @@ async function onSubmit() {
     <CherryBlossomBackground />
 
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
-      <div class="absolute right-0 top-0 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl" />
-      <div class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-200/30 blur-3xl" />
+      <div
+        class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl"
+      />
+      <div
+        class="absolute right-0 top-0 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl"
+      />
+      <div
+        class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-200/30 blur-3xl"
+      />
     </div>
 
-    <div class="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-10">
+    <div
+      class="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-10"
+    >
       <UiCard
         class="w-full max-w-xl border-white/70 bg-white/82 p-7 shadow-[0_24px_70px_rgba(165,110,125,0.14)] backdrop-blur-xl sm:p-8"
       >
         <div class="mx-auto flex max-w-md flex-col gap-6">
           <div class="space-y-3 text-center">
             <div class="inline-flex items-center justify-center">
-              <div class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/80 to-amber-300/80 text-2xl shadow-lg">
+              <div
+                class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/80 to-amber-300/80 text-2xl shadow-lg"
+              >
                 🌸
               </div>
             </div>
             <div>
-              <h2 class="text-2xl font-semibold text-foreground">아이디 만들기</h2>
+              <h2 class="text-2xl font-semibold text-foreground">
+                아이디 만들기
+              </h2>
               <p class="mt-2 text-sm leading-6 text-muted-foreground">
                 로그인에 사용할 아이디와 비밀번호를 등록합니다.
               </p>
@@ -126,7 +145,9 @@ async function onSubmit() {
             </label>
 
             <label class="block space-y-2">
-              <span class="text-sm font-medium text-foreground">비밀번호 확인</span>
+              <span class="text-sm font-medium text-foreground"
+                >비밀번호 확인</span
+              >
               <input
                 v-model="confirmPassword"
                 type="password"
