@@ -12,6 +12,7 @@ import {
   List,
   Settings,
   BarChart3,
+  ScanLine,
 } from 'lucide-vue-next';
 import { cn } from '@/shared/lib/utils';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
@@ -35,6 +36,7 @@ const navItems = [
 
 const extraItems = [
   { id: 'transactions', label: '거래 내역', to: '/transactions', icon: List },
+  { id: 'receipt', label: '영수증 스캔', to: '/receipt', icon: ScanLine },
   { id: 'settings', label: '설정', to: '/settings', icon: Settings },
 ];
 
