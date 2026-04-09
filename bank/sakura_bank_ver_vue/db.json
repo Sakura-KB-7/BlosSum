@@ -333,6 +333,24 @@
       "name": "용돈·기타수입",
       "type": "income",
       "color": "#E6EE9C"
+    },
+    {
+      "id": 17,
+      "name": "카페·간식",
+      "type": "expense",
+      "color": "#FFAB91"
+    },
+    {
+      "id": 18,
+      "name": "취미·운동",
+      "type": "expense",
+      "color": "#81C784"
+    },
+    {
+      "id": 19,
+      "name": "미용",
+      "type": "expense",
+      "color": "#FBC02D"
     }
   ],
   "userSettings": [],

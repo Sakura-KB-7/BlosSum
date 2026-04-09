@@ -36,7 +36,8 @@
 
         <div class="flex gap-2 w-full">
           <button
-            @click="$refs.fileInput.click()"
+            type="button"
+            @click="handleResetAndPick"
             class="flex-1 px-4 py-2 border border-slate-200 bg-slate-100 text-slate-700 rounded-full text-sm font-medium hover:bg-slate-200 transition-colors"
           >
             다시 선택
@@ -69,6 +70,7 @@ import { CameraIcon, XIcon, Loader2Icon } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 
 const emit = defineEmits(['analyze']);
+const props = defineProps(['isAnalyzing']);
 
 const fileInput = ref(null);
 const imageFile = ref(null);
@@ -99,5 +101,17 @@ const resetImage = () => {
 const handleAnalyze = () => {
   isAnalyzing.value = true;
   emit('analyze', imageFile.value);
+};
+
+// 다시 선택 버튼을 눌렀을 때 실행될 함수
+const handleResetAndPick = () => {
+  isAnalyzing.value = false; // 분석 종료
+
+  // 파일 비우기
+  if (fileInput.value) {
+    fileInput.value.value = '';
+  }
+  // 파일 선택창 열기
+  fileInput.value.click();
 };
 </script>
