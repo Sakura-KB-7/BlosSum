@@ -184,6 +184,39 @@
       "title": "교통비",
       "amount": 55000,
       "isFixed": false
+    },
+    {
+      "type": "expense",
+      "date": "2026-04-08",
+      "categoryId": 2,
+      "title": "가스비",
+      "amount": 34444,
+      "paymentMethod": "transfer",
+      "memo": "",
+      "isFixed": false,
+      "id": 19
+    },
+    {
+      "type": "expense",
+      "date": "2026-04-11",
+      "categoryId": 2,
+      "title": "전기세",
+      "amount": 12341,
+      "paymentMethod": "card",
+      "memo": "",
+      "isFixed": false,
+      "id": 20
+    },
+    {
+      "type": "expense",
+      "date": "2026-04-09",
+      "categoryId": 9,
+      "title": "맥북 구매",
+      "amount": 3000000,
+      "paymentMethod": "card",
+      "memo": "",
+      "isFixed": false,
+      "id": 21
     }
   ],
   "categories": [
