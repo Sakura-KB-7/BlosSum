@@ -13,7 +13,7 @@
   → `features/dashboard/`
 - `views/SettingsView.vue`, `stores/profile.ts`
   → `features/settings/`
-- `views/CharmsView.vue`, `views/MapView.vue`, `views/NewsletterView.vue`
+- `views/CharmsView.vue`, `map/views/MapView.vue`, `views/NewsletterView.vue`
   → `features/experiments/`
 
 ## 전환 원칙
@@ -21,4 +21,3 @@
 1. 라우트 경로는 유지하고 내부 import만 단계적으로 교체
 2. 기능별 `components`, `store`, `api`, `types`를 함께 이동
 3. 대규모 이동은 PR을 기능별로 쪼개서 진행
-

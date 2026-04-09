@@ -38,6 +38,7 @@
             - props로 상태 전달
             -->
             <ReceiptUploader
+              v-model:is-analyzing="isAnalyzing"
               @analyze="handleAnalyze"
               :is-loading="isAnalyzing"
             />
@@ -89,11 +90,11 @@
                 class="text-[10px] font-bold text-[#ff7a9d] uppercase tracking-wider"
                 >Notice</span
               >
-              <p class="text-[11px] text-muted-foreground whitespace-nowrap">
+              <p class="text-[11px] text-muted-foreground">
                 실제 내용과 다를 수 있으니
-                <span class="text-[#ff7a9d] font-medium">날짜</span>와
-                <span class="text-[#ff7a9d] font-medium">금액</span>을 확인해
-                주세요.
+                <span class="text-[#ff7a9d] font-medium"
+                  >날짜, 금액, 카테고리</span
+                >를 확인해 주세요.
               </p>
             </div>
           </div>
@@ -117,6 +118,7 @@ import axios from 'axios';
 import { ScanLine, Loader2Icon, CheckCircle2Icon } from 'lucide-vue-next';
 import ReceiptUploader from '@/components/receipt/ReceiptUploader.vue';
 import InputFormView from '@/components/receipt/InputFormView.vue';
+import { getRecommendedCategory } from '@/ocr/api/llm';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
 
@@ -128,7 +130,7 @@ const budget = useBudgetStore();
 const categories = useCategoryStore();
 
 // 상태 관리
-const GOOGLE_API_KEY = 'AIzaSyCnbeHwt4ovp2iSgd356Xrm2TXuDho1oGs'; // API 키
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_VISION_API_KEY; // API 키
 const isAnalyzing = ref(false); // 스캔 진행 상태
 const extractedResult = ref(null); // OCR 결과 데이터
 const isStarted = ref(false); // 스캔 시작 여부
@@ -149,30 +151,42 @@ const handleAnalyze = async (file) => {
   extractedResult.value = null;
 
   try {
-    let fullText = '';
-
+    // [1] Google Vision OCR 실행
     const base64Image = await convertFileToBase64(file);
     const pureBase64 = base64Image.split(',')[1];
 
-    const payload = {
-      requests: [
-        {
-          image: { content: pureBase64 },
-          features: [{ type: 'TEXT_DETECTION' }],
-        },
-      ],
-    };
-
-    const response = await axios.post(
+    const ocrResponse = await axios.post(
       `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_API_KEY}`,
-      payload,
+      {
+        requests: [
+          {
+            image: { content: pureBase64 },
+            features: [{ type: 'TEXT_DETECTION' }],
+          },
+        ],
+      },
     );
 
-    // optional chaining -> 값 없을 때 에러 방지
-    fullText = response.data.responses[0]?.fullTextAnnotation?.text || '';
+    const fullText =
+      ocrResponse.data.responses[0]?.fullTextAnnotation?.text || '';
 
-    // OCR 결과 있으면 파싱
-    if (fullText) processParsedData(fullText);
+    if (fullText) {
+      // [2] 정규식 기반 파싱 (날짜, 금액)
+      const basicInfo = processParsedData(fullText);
+
+      // [3] gpt 추천 카테고리 받아옴
+      // - 현재 지출 카테고리 목록 보냄
+      const recommendedId = await getRecommendedCategory(
+        fullText,
+        categories.expense,
+      );
+
+      // [4] 결과 데이터 합치기
+      extractedResult.value = {
+        ...basicInfo,
+        categoryId: recommendedId, // 자동 선택된 ID 주입
+      };
+    }
   } catch (error) {
     console.error(error);
     alert('분석 중 오류가 발생했습니다.');
@@ -262,7 +276,7 @@ const processParsedData = (text) => {
     if (nums.length > 0) finalAmount = Math.max(...nums);
   }
 
-  extractedResult.value = {
+  return {
     store: '',
     date: formattedDate,
     amount: finalAmount,

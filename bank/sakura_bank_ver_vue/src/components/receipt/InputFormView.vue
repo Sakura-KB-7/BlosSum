@@ -55,8 +55,16 @@ const initFormData = () => {
       props.initialData.date || new Date().toISOString().slice(0, 10);
     title.value = props.initialData.store || '';
     amount.value = props.initialData.amount || null;
-  } else {
-    date.value = new Date().toISOString().slice(0, 10);
+
+    // LLM이 추천한 ID가 카테고리 목록에 있는지 확인 후 할당
+    if (props.initialData.categoryId) {
+      const exists = categoryList.value.some(
+        (c) => c.id === props.initialData.categoryId,
+      );
+      if (exists) {
+        categoryId.value = props.initialData.categoryId;
+      }
+    }
   }
 };
 
