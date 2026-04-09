@@ -24,7 +24,7 @@ watch(isIntroComplete, (value) => {
 });
 
 function triggerSakuraBurst() {
-  window.dispatchEvent(new CustomEvent('sakura:burst', { detail: { count: 16 } }));
+  window.dispatchEvent(new CustomEvent('sakura:burst', { detail: { count: 48 } }));
 }
 </script>
 
