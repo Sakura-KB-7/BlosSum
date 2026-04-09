@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import SpringWalletLayout from '@/layouts/SpringWalletLayout.vue';
 import { useAuthStore } from '@/stores/auth';
+import IntroView from '@/Intro/pages/IntroView.vue'; // 새로 만든 인트로 로드
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,13 +18,19 @@ const router = createRouter({
     },
     {
       path: '/',
+      name: 'intro',
+      component: IntroView, // 첫 시작은 인트로 페이지
+    },
+    {
+      path: '/',
       component: SpringWalletLayout,
       children: [
         { path: '', redirect: { name: 'login' } },
         {
           path: 'dashboard',
           name: 'dashboard',
-          component: () => import('@/features/dashboard/views/DashboardView.vue'),
+          component: () =>
+            import('@/features/dashboard/views/DashboardView.vue'),
         },
         {
           path: 'calendar',
@@ -48,17 +55,20 @@ const router = createRouter({
         {
           path: 'transactions',
           name: 'transactions',
-          component: () => import('@/features/transactions/views/TransactionListView.vue'),
+          component: () =>
+            import('@/features/transactions/views/TransactionListView.vue'),
         },
         {
           path: 'transactions/new',
           name: 'transaction-new',
-          component: () => import('@/features/transactions/views/TransactionFormView.vue'),
+          component: () =>
+            import('@/features/transactions/views/TransactionFormView.vue'),
         },
         {
           path: 'transactions/:id/edit',
           name: 'transaction-edit',
-          component: () => import('@/features/transactions/views/TransactionFormView.vue'),
+          component: () =>
+            import('@/features/transactions/views/TransactionFormView.vue'),
         },
         {
           path: 'settings',
