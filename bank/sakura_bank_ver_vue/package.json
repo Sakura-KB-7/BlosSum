@@ -4,12 +4,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k -n api,search,web -c blue,magenta,green \"npm run dev:api\" \"npm run dev:search\" \"npm run dev:web\"",
+    "dev:web": "vite",
+    "dev:api": "json-server --watch db.json --port 3000",
+    "dev:search": "node --env-file=.env server/naver-search-proxy.js",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
     "gsap": "^3.14.2",
