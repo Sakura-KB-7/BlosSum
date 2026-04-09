@@ -353,8 +353,23 @@
       "color": "#FBC02D"
     }
   ],
-  "userSettings": [],
-  "users": [],
+  "userSettings": [
+    {
+      "userId": "bkh",
+      "name": "bkh",
+      "email": "",
+      "monthlyBudget": 0,
+      "currency": "KRW",
+      "id": 1
+    }
+  ],
+  "users": [
+    {
+      "userId": "bkh",
+      "password": "1234",
+      "id": 1
+    }
+  ],
   "favoritePlaces": [
     {
       "userId": "admin",
