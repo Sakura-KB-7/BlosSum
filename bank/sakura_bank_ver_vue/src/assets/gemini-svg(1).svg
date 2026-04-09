@@ -1,0 +1,23 @@
+<svg viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M400 550C400 550 380 450 400 350C420 250 480 150 480 150" stroke="#5D4037" stroke-width="12" stroke-linecap="round"/>
+  <path d="M400 400C400 400 350 320 300 300" stroke="#5D4037" stroke-width="8" stroke-linecap="round"/>
+  <path d="M410 330C410 330 460 280 520 270" stroke="#5D4037" stroke-width="6" stroke-linecap="round"/>
+  
+  <g opacity="0.8">
+    <circle cx="320" cy="320" r="60" fill="#FFD1DC"/>
+    <circle cx="280" cy="350" r="50" fill="#FBCFE8"/>
+    <circle cx="400" cy="220" r="100" fill="#FFF1F2"/>
+    <circle cx="450" cy="250" r="80" fill="#FFD1DC"/>
+    <circle cx="520" cy="180" r="70" fill="#FBCFE8"/>
+    <circle cx="580" cy="220" r="60" fill="#FFF1F2"/>
+  </g>
+
+  <g fill="#F472B6" opacity="0.6">
+    <circle cx="350" cy="280" r="5"/><circle cx="370" cy="210" r="4"/>
+    <circle cx="420" cy="150" r="6"/><circle cx="480" cy="230" r="5"/>
+    <circle cx="530" cy="190" r="4"/><circle cx="300" cy="330" r="5"/>
+    <circle cx="400" cy="300" r="4"/><circle cx="440" cy="180" r="5"/>
+  </g>
+  
+  <ellipse cx="400" cy="560" rx="120" ry="20" fill="#FFD1DC" opacity="0.3"/>
+</svg>
