@@ -59,6 +59,11 @@ export default createRouter({
           name: 'Statistics',
           component: () => import('@/views/StatisticsView.vue'),
         },
+        {
+          path: '/receipt',
+          name: 'receipt',
+          component: () => import('@/views/ReceiptView.vue'),
+        },
       ],
     },
     { path: '/:pathMatch(.*)*', redirect: { name: 'dashboard' } },
