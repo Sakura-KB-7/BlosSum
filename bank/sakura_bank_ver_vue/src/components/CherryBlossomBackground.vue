@@ -19,18 +19,37 @@ onMounted(() => {
   window.addEventListener('resize', resize);
 
   const petals = [];
-  for (let i = 0; i < 25; i++) {
-    petals.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height - canvas.height,
-      size: Math.random() * 8 + 4,
-      speedX: Math.random() * 0.5 - 0.25,
-      speedY: Math.random() * 0.5 + 0.3,
-      rotation: Math.random() * Math.PI * 2,
-      rotationSpeed: (Math.random() - 0.5) * 0.02,
-      opacity: Math.random() * 0.4 + 0.3,
-    });
-  }
+  const MAX_PETALS = 120;
+  let lastBurstAt = 0;
+
+  const createPetal = (overrides = {}) => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    size: Math.random() * 8 + 4,
+    speedX: Math.random() * 0.5 - 0.25,
+    speedY: Math.random() * 0.5 + 0.3,
+    rotation: Math.random() * Math.PI * 2,
+    rotationSpeed: (Math.random() - 0.5) * 0.02,
+    opacity: Math.random() * 0.4 + 0.3,
+    ...overrides,
+  });
+
+  const spawnBurst = (count = 12) => {
+    const available = Math.max(0, MAX_PETALS - petals.length);
+    const n = Math.min(count, available);
+    for (let i = 0; i < n; i++) {
+      petals.push(
+        createPetal({
+          y: Math.random() * 120 - 80,
+          speedX: Math.random() * 1.8 - 0.9,
+          speedY: Math.random() * 1.2 + 0.7,
+          size: Math.random() * 10 + 4,
+        })
+      );
+    }
+  };
+
+  for (let i = 0; i < 25; i++) petals.push(createPetal());
 
   const drawPetal = (petal) => {
     ctx.save();
@@ -78,8 +97,32 @@ onMounted(() => {
   };
   animate();
 
+  const onBurstEvent = (event) => {
+    const count = Number(event?.detail?.count ?? 12);
+    spawnBurst(Number.isNaN(count) ? 12 : count);
+  };
+
+  const onKeyDown = (event) => {
+    if (event.code !== 'KeyB' || event.repeat) return;
+    const active = document.activeElement;
+    const tag = active?.tagName?.toLowerCase();
+    const isTypingTarget =
+      tag === 'input' || tag === 'textarea' || active?.isContentEditable || tag === 'select';
+    if (isTypingTarget) return;
+
+    const nowTs = performance.now();
+    if (nowTs - lastBurstAt < 120) return;
+    lastBurstAt = nowTs;
+    spawnBurst(14);
+  };
+
+  window.addEventListener('sakura:burst', onBurstEvent);
+  window.addEventListener('keydown', onKeyDown);
+
   teardown = () => {
     window.removeEventListener('resize', resize);
+    window.removeEventListener('sakura:burst', onBurstEvent);
+    window.removeEventListener('keydown', onKeyDown);
     cancelAnimationFrame(rafId);
   };
 });

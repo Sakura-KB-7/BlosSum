@@ -103,6 +103,11 @@ const router = createRouter({
           name: 'Statistics',
           component: () => import('@/views/StatisticsView.vue'),
         },
+        {
+          path: '/receipt',
+          name: 'receipt',
+          component: () => import('@/views/ReceiptView.vue'),
+        },
       ],
     },
     // [수정 5] 잘못된 주소 접근 시 로그인 대신 인트로로 리다이렉트하여 서비스 첫인상 강조
