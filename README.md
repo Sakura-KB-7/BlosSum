@@ -1,6 +1,7 @@
 # 🌸 MoneyBlosSum
 
-**확실한 돈 관리를 위한 벚꽃 테마 가계부 서비스**  
+**확실한 돈 관리를 위한 벚꽃 테마 가계부 서비스**
+
 > "당신의 소비가 꽃잎이 되어 날아가지 않도록, 자산이 만개하는 봄을 기록하세요."
 
 > 진행상황 체크 문서: [`docs/status/current-status.md`](./docs/status/current-status.md)
@@ -26,28 +27,34 @@
 ## 3) 기술 스택
 
 ### 필수
+
 - **Frontend:** Vite, Vue 3, Composition API, vue-router, axios, Pinia, Component 기반 구조, 이벤트 처리
-- **Backend:** json-server (`db.json`)
+- **Backend:** json-server (`backend/json-server/db.json`)
 
 ### 선택
+
 - Figma, draw.io
 - Bootstrap 5, FontAwesome
 
 ## 4) 핵심 기능 (MVP)
 
 ### A. 거래 기록
+
 - 수입/지출 입력: 날짜, 금액, 카테고리, 메모
 - 고정 수입/지출 기록 지원 (`isFixed`, `recurringDay`)
 
 ### B. 거래 조회
+
 - 기간, 타입(수입/지출), 카테고리 필터
 - 정렬(오름차순/내림차순)
 
 ### C. 월별 요약
+
 - 월별 수입/지출/잔액(순이익) 집계
 - 차트/그래프 시각화
 
 ### D. 데이터 저장
+
 - json-server 기반 CRUD
 
 ## 5) 페이지 구성
@@ -100,6 +107,7 @@
 ```
 
 ### 월 요약 계산 예시
+
 - 해당 월 `records`만 필터링
 - `type === 'income'` 합계
 - `type === 'expense'` 합계
@@ -108,7 +116,7 @@
 ## 8) 아키텍처
 
 ```text
-User → Vue3 (router → page → axios) ↔ json-server (db.json)
+User → Vue3 (router → page → axios) ↔ json-server (backend/json-server/db.json)
                   ↕
               reusable components
 ```
@@ -116,11 +124,13 @@ User → Vue3 (router → page → axios) ↔ json-server (db.json)
 ## 9) json-server 실행
 
 ```bash
-cd bank/sakura_bank_ver_vue
-npx json-server db.json
+cd backend/json-server
+npm install
+npm run dev
 ```
 
 기본 CRUD:
+
 - `GET /records`
 - `GET /records/:id`
 - `POST /records`
@@ -139,4 +149,3 @@ npx json-server db.json
 - 화면 설계 문서 (ppt/figma/draw.io)
 - 소스 코드
 - 발표 자료 (PDF, 10MB 이하)
-
