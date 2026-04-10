@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import {
   Home,
   Calendar,
@@ -13,14 +13,18 @@ import {
   Settings,
   BarChart3,
   ScanLine,
+  DoorOpen,
 } from 'lucide-vue-next';
 import { cn } from '@/shared/lib/utils';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
+import { useAuthStore } from '@/stores/auth';
 import { useProfileStore } from '@/stores/profile';
 
 const route = useRoute();
+const router = useRouter();
 const collapsed = ref(false);
+const auth = useAuthStore();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
 const profile = useProfileStore();
@@ -52,6 +56,11 @@ function isExtraActive(item) {
   return route.path === item.to;
 }
 
+function onLogout() {
+  auth.logout();
+  router.push({ name: 'login' });
+}
+
 onMounted(async () => {
   await Promise.all([
     budget.fetchAll(),
@@ -79,8 +88,7 @@ onMounted(async () => {
         🌸
       </div>
       <div v-if="!collapsed" class="flex flex-col">
-        <span class="font-semibold text-sidebar-foreground">봄지갑</span>
-        <span class="text-xs text-muted-foreground">Spring Wallet</span>
+        <span class="font-semibold text-pink-400">MoneyBlosSum</span>
       </div>
     </div>
 
@@ -122,14 +130,6 @@ onMounted(async () => {
         />
         <span v-if="!collapsed">{{ item.label }}</span>
       </RouterLink>
-
-      <div
-        v-if="!collapsed"
-        class="px-1 pt-3 text-xs font-semibold text-muted-foreground"
-      >
-        과제 메뉴
-      </div>
-
       <RouterLink
         v-for="item in extraItems"
         :key="item.id"
@@ -146,6 +146,20 @@ onMounted(async () => {
         <component :is="item.icon" class="h-5 w-5 shrink-0" />
         <span v-if="!collapsed">{{ item.label }}</span>
       </RouterLink>
+
+      <button
+        type="button"
+        :class="
+          cn(
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+            'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-primary',
+          )
+        "
+        @click="onLogout"
+      >
+        <DoorOpen class="h-5 w-5 shrink-0" />
+        <span v-if="!collapsed">로그아웃</span>
+      </button>
     </nav>
 
     <button

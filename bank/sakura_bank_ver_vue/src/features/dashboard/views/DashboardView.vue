@@ -12,7 +12,6 @@ import {
 } from 'lucide-vue-next';
 
 import UiCard from '@/shared/ui/UiCard.vue';
-import UiButton from '@/shared/ui/UiButton.vue';
 import StatCard from '../components/StatCard.vue';
 import CategoryPie from '../components/CategoryPie.vue';
 import NewsletterWidget from '../components/NewsletterWidget.vue';
@@ -21,10 +20,8 @@ import ReceiptWidget from '../components/ReceiptWidget.vue';
 
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
-import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
-const auth = useAuthStore();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
 
@@ -138,11 +135,6 @@ const pieData = computed(() => {
 onMounted(async () => {
   await Promise.all([budget.fetchAll(), categories.fetchAll()]);
 });
-
-function onLogout() {
-  auth.logout();
-  router.push({ name: 'login' });
-}
 </script>
 
 <template>
@@ -154,13 +146,6 @@ function onLogout() {
         </h1>
         <p class="text-muted-foreground text-sm">{{ dateLabel }}</p>
       </div>
-      <UiButton
-        variant="outline"
-        class="rounded-full shadow-sm"
-        @click="onLogout"
-      >
-        로그아웃
-      </UiButton>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
