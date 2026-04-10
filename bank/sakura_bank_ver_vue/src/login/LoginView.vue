@@ -53,8 +53,7 @@ async function onSubmit() {
     auth.login(user.userId);
     router.push({ name: 'dashboard' });
   } catch (error) {
-    errorMessage.value =
-      '로그인하지 못했습니다. json-server 상태를 확인하세요.';
+    errorMessage.value = '로그인하지 못했습니다. json-server 상태를 확인하세요.';
   } finally {
     loading.value = false;
   }
@@ -68,15 +67,9 @@ async function onSubmit() {
     <CherryBlossomBackground />
 
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div
-        class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl"
-      />
-      <div
-        class="absolute right-0 top-0 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl"
-      />
-      <div
-        class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-200/30 blur-3xl"
-      />
+      <div class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
+      <div class="absolute right-0 top-0 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl" />
+      <div class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-200/30 blur-3xl" />
     </div>
 
     <div
@@ -124,15 +117,6 @@ async function onSubmit() {
                 class="h-12 w-full rounded-2xl border border-border bg-white/80 px-4 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
               />
             </label>
-
-            <div class="flex justify-end">
-              <button
-                type="button"
-                class="text-sm font-medium text-primary underline-offset-4 transition hover:underline"
-              >
-                비밀번호 찾기
-              </button>
-            </div>
 
             <p
               v-if="errorMessage"
