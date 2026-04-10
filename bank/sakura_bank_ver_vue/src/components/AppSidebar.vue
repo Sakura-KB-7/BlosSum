@@ -65,7 +65,7 @@ onMounted(async () => {
   <aside
     :class="
       cn(
-        'relative flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300',
+        'sticky top-0 z-20 flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300',
         collapsed ? 'w-16' : 'w-64',
       )
     "
