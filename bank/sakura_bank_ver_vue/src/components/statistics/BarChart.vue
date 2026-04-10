@@ -13,27 +13,27 @@ import {
   Title,
   Tooltip,
   Legend,
-  BarElement,
   BarController,
+  LineController,
+  BarElement,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  LineController,
 } from 'chart.js';
 
-// Chart.js 구성 요소 등록
+// 혼합 차트(막대 + 선)는 Controller를 반드시 등록해야 함
 ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  BarElement,
   BarController,
+  LineController,
+  BarElement,
   CategoryScale,
   LinearScale,
   PointElement,
-  LineElement,
-  LineController
+  LineElement
 );
 
 // 부모 컴포넌트로부터 전달받는 props

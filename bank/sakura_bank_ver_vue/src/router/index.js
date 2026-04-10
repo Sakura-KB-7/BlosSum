@@ -6,7 +6,6 @@ import IntroView from '@/Intro/pages/IntroView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    
     { path: '/', redirect: '/intro' },
 
     /**
@@ -112,7 +111,6 @@ const router = createRouter({
 router.beforeEach((to) => {
   const auth = useAuthStore();
 
- 
   const isPublicPage =
     to.name === 'login' || to.name === 'signup' || to.name === 'intro';
 

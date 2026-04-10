@@ -41,8 +41,28 @@ const CARD_SCHEMA = {
   },
 };
 
+const SIGNAL_DESCRIPTIONS_KO = {
+  weekly_spend_rising: '최근 7일 지출 합이 그 전 주보다 크게 늘어난 편',
+  high_food_spending: '이번 주 지출에서 식비·외식 비중이 두드러짐',
+  transport_cost_rising: '교통비 관련 지출이 상대적으로 큼',
+  stable_spending_pattern: '최근 지출이 비교적 안정적인 편',
+  budget_pressure_high: '이번 달 누적 지출이 월 예산 대비 부담이 큼',
+  single_category_heavy: '특정 카테고리에 지출이 한곳으로 몰림',
+  recent_activity_started: '최근에 거래 기록이 새로 쌓이기 시작함',
+};
+
+function signalsToKoreanSummary(signals) {
+  const list = Array.isArray(signals) ? signals : [];
+  if (list.length === 0) return '특이 패턴 없음';
+  return list
+    .map((s) => SIGNAL_DESCRIPTIONS_KO[s] || s)
+    .filter(Boolean)
+    .join(' · ');
+}
+
 function buildPrompt({ totalExpense, topCategories, signals, budget }, count) {
   const today = new Date().toISOString().slice(0, 10);
+  const signalSummaryKo = signalsToKoreanSummary(signals);
   return [
     '당신은 개인 가계부 AI 소식지 작성자입니다.',
     '사용자 소비 데이터를 기반으로 실천 가능한 카드뉴스를 작성하세요.',
@@ -51,7 +71,7 @@ function buildPrompt({ totalExpense, topCategories, signals, budget }, count) {
     '[사용자 소비 요약]',
     `- 총 지출: ${Number(totalExpense || 0).toLocaleString('ko-KR')}원`,
     `- 상위 카테고리: ${(topCategories || []).join(', ') || '데이터 없음'}`,
-    `- 소비 신호: ${(signals || []).join(', ') || '없음'}`,
+    `- 소비 패턴(한글 요약, 아래 문장만 참고하고 영문 코드는 사용 금지): ${signalSummaryKo}`,
     `- 월 예산: ${Number(budget || 0).toLocaleString('ko-KR')}원`,
     `- 기준 날짜: ${today}`,
     '',
@@ -59,15 +79,16 @@ function buildPrompt({ totalExpense, topCategories, signals, budget }, count) {
     `1) 정확히 ${count}개의 카드 작성`,
     '2) 과장 금지, 실용적 문장 사용',
     '3) 각 카드의 actionTip은 오늘 바로 할 수 있는 행동으로 작성',
-    '4) 카드끼리 내용 중복 금지',
+    '4) 카드끼리 제목·요약·이유 문장 구조가 겹치지 않게 다르게 작성(같은 문장 틀 반복 금지)',
     '5) 한국어로 작성',
-    '6) 각 카드에 실제 참고 출처를 sourceTitle/sourceUrl로 제공',
-    '7) sourceUrl은 유효한 http/https URL만 사용, 모르면 빈 문자열("")',
-    '8) 2025년 이후(가능하면 최근 6개월 내) 정보만 사용',
-    '9) 종료/만료/폐지된 혜택은 제외',
-    '10) 카드 내용과 출처가 직접적으로 연결되어야 함(카드 핵심 키워드가 출처 제목에 포함되도록 우선)',
-    '11) 출처는 구체 페이지를 사용하고 메인 홈페이지/검색결과 페이지는 지양',
-    '12) reason에는 왜 이 카드가 사용자 소비 신호와 맞는지 구체적으로 작성',
+    '6) summary, reason, actionTip에 weekly_spend_rising 같은 영문 코드나 스네이크케이스 키를 절대 넣지 말 것',
+    '7) 각 카드에 실제 참고 출처를 sourceTitle/sourceUrl로 제공',
+    '8) sourceUrl은 유효한 http/https URL만 사용, 모르면 빈 문자열("")',
+    '9) 2025년 이후(가능하면 최근 6개월 내) 정보만 사용',
+    '10) 종료/만료/폐지된 혜택은 제외',
+    '11) 카드 내용과 출처가 직접적으로 연결되어야 함(카드 핵심 키워드가 출처 제목에 포함되도록 우선)',
+    '12) 출처는 구체 페이지를 사용하고 메인 홈페이지/검색결과 페이지는 지양',
+    '13) reason은 2~3문장으로, 위 한글 소비 패턴 요약 중 이 카드와 맞는 한 가지 관점만 짚어 설명(모든 카드가 같은 추세 문장을 복붙하지 말 것)',
     '',
     '[검색 우선순위]',
     '- 정부 지원/정책: 정부 공식 사이트, 지자체 공식 사이트',
@@ -119,6 +140,9 @@ const SIGNAL_KEYWORDS = {
   high_food_spending: ['식비', '외식', '편의점', '마트', '배달', '푸드'],
   transport_cost_rising: ['교통', '대중교통', '지하철', '버스', '주유'],
   stable_spending_pattern: ['저축', '자산', '관리'],
+  budget_pressure_high: ['예산', '절약', '한도', '통제'],
+  single_category_heavy: ['비중', '집중', '관리', '조정'],
+  recent_activity_started: ['시작', '기록', '습관'],
 };
 
 const CARD_TYPE_KEYWORDS = {
