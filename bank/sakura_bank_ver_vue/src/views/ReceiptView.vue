@@ -94,12 +94,22 @@
             <InputFormView
               :initial-data="extractedResult"
               @success="handleSuccess"
+              @notify="handleNotify"
               @cancel="handleCancel"
             />
           </div>
         </UiCard>
       </div>
     </div>
+
+    <ReceiptAlertModal
+      :open="alertState.open"
+      :title="alertState.title"
+      :description="alertState.description"
+      :tone="alertState.tone"
+      @close="closeAlert"
+      @confirm="confirmAlert"
+    />
   </div>
 </template>
 
@@ -109,6 +119,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { ScanLine, Loader2Icon, CheckCircle2Icon } from 'lucide-vue-next';
 import ReceiptUploader from '@/components/receipt/ReceiptUploader.vue';
+import ReceiptAlertModal from '@/components/receipt/ReceiptAlertModal.vue';
 import InputFormView from '@/components/receipt/InputFormView.vue';
 import { getRecommendedCategory } from '@/ocr/api/llm';
 import UiCard from '@/shared/ui/UiCard.vue';
@@ -128,18 +139,54 @@ const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_VISION_API_KEY; // API 키
 const isAnalyzing = ref(false); // 스캔 진행 상태
 const extractedResult = ref(null); // OCR 결과 데이터
 const isStarted = ref(false); // 스캔 시작 여부
+const alertState = ref({
+  open: false,
+  title: '',
+  description: '',
+  tone: 'default',
+  onConfirm: null,
+});
 
 // 초기 데이터 로딩
 onMounted(async () => {
   await Promise.all([budget.fetchAll(), categories.fetchAll()]);
 });
 
+function openAlert({ title, description, tone = 'default', onConfirm = null }) {
+  alertState.value = {
+    open: true,
+    title,
+    description,
+    tone,
+    onConfirm,
+  };
+}
+
+function closeAlert() {
+  alertState.value = {
+    open: false,
+    title: '',
+    description: '',
+    tone: 'default',
+    onConfirm: null,
+  };
+}
+
+function confirmAlert() {
+  const action = alertState.value.onConfirm;
+  closeAlert();
+  if (typeof action === 'function') action();
+}
+
 // 영수증 분석 로직
 // 파일 업로드 후 실행되는 함수
 const handleAnalyze = async (file) => {
   if (!file) return;
   if (!GOOGLE_API_KEY) {
-    alert('Google Vision API 키가 없습니다. VITE_GOOGLE_VISION_API_KEY를 설정해 주세요.');
+    openAlert({
+      title: 'Google Vision API 키가 없습니다',
+      description: '`.env`에 `VITE_GOOGLE_VISION_API_KEY`를 설정해 주세요.',
+    });
     return;
   }
 
@@ -188,7 +235,10 @@ const handleAnalyze = async (file) => {
     }
   } catch (error) {
     console.error(error);
-    alert('분석 중 오류가 발생했습니다.');
+    openAlert({
+      title: '분석 중 오류가 발생했습니다',
+      description: '이미지를 다시 업로드하거나 잠시 후 다시 시도해 주세요.',
+    });
   } finally {
     isAnalyzing.value = false;
     loadingStore.hideOverlay();
@@ -283,9 +333,17 @@ const processParsedData = (text) => {
 
 // 저장 성공
 const handleSuccess = () => {
-  alert('성공적으로 저장되었습니다!');
-  router.push({ name: 'transactions' });
+  openAlert({
+    title: '성공적으로 저장되었습니다!',
+    description: '거래 내역 화면으로 이동해 저장된 영수증을 확인할 수 있습니다.',
+    tone: 'success',
+    onConfirm: () => router.push({ name: 'transactions' }),
+  });
 };
+
+function handleNotify(payload) {
+  openAlert(payload);
+}
 
 // 취소 버튼 클릭
 const handleCancel = () => {
