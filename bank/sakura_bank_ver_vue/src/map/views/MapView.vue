@@ -1,6 +1,5 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { Map } from 'lucide-vue-next';
 import { loadNaverMapsSdk } from '@/map/lib/naver-map';
 import MapCanvasCard from '@/map/components/MapCanvasCard.vue';
 import MapDraftPlaceCard from '@/map/components/MapDraftPlaceCard.vue';
@@ -97,12 +96,7 @@ onMounted(async () => {
 <template>
   <div class="space-y-6">
     <!-- 이 화면이 어떤 기능을 제공하는지 먼저 설명하는 헤더 영역 -->
-    <div class="flex items-start gap-3">
-      <div
-        class="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary"
-      >
-        <Map class="h-5 w-5" />
-      </div>
+    <div>
       <div>
         <h1 class="text-2xl font-bold text-foreground">나의 소비지도</h1>
         <p class="text-muted-foreground">

@@ -170,15 +170,5 @@ onMounted(async () => {
       <ChevronRight v-if="collapsed" class="h-3 w-3" />
       <ChevronLeft v-else class="h-3 w-3" />
     </button>
-
-    <div v-if="!collapsed" class="border-t border-sidebar-border p-4">
-      <div class="rounded-xl bg-primary/10 p-3 text-center">
-        <p class="text-xs text-muted-foreground">이번 달 절약 목표</p>
-        <p class="text-lg font-bold text-primary">72%</p>
-        <div class="mt-2 h-2 overflow-hidden rounded-full bg-primary/20">
-          <div class="h-full w-[72%] rounded-full bg-primary transition-all" />
-        </div>
-      </div>
-    </div>
   </aside>
 </template>
