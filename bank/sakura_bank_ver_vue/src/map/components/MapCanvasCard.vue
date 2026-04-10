@@ -34,12 +34,13 @@ defineExpose({
         <span class="text-4xl">🧭</span>
         <p class="font-medium text-foreground">{{ mapError }}</p>
         <p class="text-sm text-muted-foreground">
-          `.env.example`을 참고해서 client ID를 넣은 뒤 개발 서버를 다시 실행하면 됩니다.
+          `.env.example`을 참고해서 client ID를 넣은 뒤 개발 서버를 다시
+          실행하면 됩니다.
         </p>
       </div>
       <div v-else class="relative">
         <!-- 실제 네이버 지도가 붙는 빈 컨테이너 -->
-        <div ref="mapContainer" class="h-[520px] w-full bg-secondary/40" />
+        <div ref="mapContainer" class="h-[350px] w-full bg-secondary/40" />
         <!-- 지도 위에 떠 있는 현재 위치 이동 버튼 -->
         <button
           type="button"

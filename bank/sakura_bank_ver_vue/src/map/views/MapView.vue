@@ -20,7 +20,9 @@ const auth = useAuthStore();
 const mapError = ref('');
 const loadingMap = ref(true);
 const mapRef = ref(null);
-const hasMapKey = computed(() => Boolean(import.meta.env.VITE_NAVER_MAP_CLIENT_ID));
+const hasMapKey = computed(() =>
+  Boolean(import.meta.env.VITE_NAVER_MAP_CLIENT_ID),
+);
 
 // 지도 SDK에서 올라오는 이벤트를 Vue 상태 변경 함수와 연결한다.
 const mapScene = createMapScene({
@@ -83,7 +85,8 @@ function moveToCurrentLocation() {
 onMounted(async () => {
   if (!hasMapKey.value) {
     loadingMap.value = false;
-    mapError.value = '네이버 지도 API 키가 없습니다. `.env`에 `VITE_NAVER_MAP_CLIENT_ID`를 추가하세요.';
+    mapError.value =
+      '네이버 지도 API 키가 없습니다. `.env`에 `VITE_NAVER_MAP_CLIENT_ID`를 추가하세요.';
     return;
   }
 
@@ -94,13 +97,17 @@ onMounted(async () => {
 <template>
   <div class="space-y-6">
     <!-- 이 화면이 어떤 기능을 제공하는지 먼저 설명하는 헤더 영역 -->
-    <div class="flex items-start gap-2.5">
-      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <Map class="h-4.5 w-4.5" />
+    <div class="flex items-start gap-3">
+      <div
+        class="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary"
+      >
+        <Map class="h-5 w-5" />
       </div>
       <div>
-        <h1 class="text-xl font-bold text-foreground">소비지도</h1>
-        <p class="text-sm text-muted-foreground">나만의 소비지도를 만들어보세요!</p>
+        <h1 class="text-2xl font-bold text-foreground">나의 소비지도</h1>
+        <p class="text-muted-foreground">
+          자주 방문하는 장소와 지역별 지출 분포를 한눈에 확인해보세요 📍
+        </p>
       </div>
     </div>
 
