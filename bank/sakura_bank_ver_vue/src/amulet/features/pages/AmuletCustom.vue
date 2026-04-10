@@ -3,6 +3,7 @@ import { reactive, ref, onMounted } from 'vue';
 import { Download, RotateCcw, Trash2, Heart, Sparkles } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
+import AmuletActionModal from '@/amulet/features/components/AmuletActionModal.vue';
 
 // 부적 꾸미기 상태 관리
 const charmConfig = reactive({
@@ -15,6 +16,9 @@ const charmConfig = reactive({
 
 // 저장된 부적 목록
 const savedCharms = ref([]);
+const showSaveModal = ref(false);
+const showDeleteModal = ref(false);
+const deletingCharmId = ref(null);
 
 // [추가] 페이지 로드 시 로컬 스토리지에서 부적 불러오기
 onMounted(() => {
@@ -122,16 +126,32 @@ const handleSave = () => {
 
   // 브라우저 저장소에 동기화
   localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
-  alert('행운이 보관함에 저장되었습니다! 🌸');
+  showSaveModal.value = true;
 };
 
+function requestDeleteCharm(id) {
+  deletingCharmId.value = id;
+  showDeleteModal.value = true;
+}
+
+function closeSaveModal() {
+  showSaveModal.value = false;
+}
+
+function closeDeleteModal() {
+  showDeleteModal.value = false;
+  deletingCharmId.value = null;
+}
+
 // [수정] 삭제 시 로컬 스토리지에서도 제거
-const deleteCharm = (id) => {
-  if (confirm('이 부적을 삭제하시겠습니까?')) {
-    savedCharms.value = savedCharms.value.filter((c) => c.id !== id);
-    localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
-  }
-};
+function confirmDeleteCharm() {
+  if (!deletingCharmId.value) return;
+  savedCharms.value = savedCharms.value.filter(
+    (c) => c.id !== deletingCharmId.value,
+  );
+  localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
+  closeDeleteModal();
+}
 
 const resetConfig = () => {
   charmConfig.colorTheme = 'pink';
@@ -405,7 +425,7 @@ const getAdjustedFrame = (frameId, themeId) => {
               }}</span>
             </div>
             <button
-              @click="deleteCharm(charm.id)"
+              @click="requestDeleteCharm(charm.id)"
               class="absolute top-1 right-1 p-1 bg-white/90 rounded-full text-gray-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500 hover:text-white shadow-sm z-20"
             >
               <Trash2 class="h-3 w-3" />
@@ -419,6 +439,29 @@ const getAdjustedFrame = (frameId, themeId) => {
         </div>
       </div>
     </UiCard>
+
+    <AmuletActionModal
+      :open="showSaveModal"
+      title="행운이 보관함에 저장되었습니다!"
+      description="방금 만든 부적이 보관함에 잘 담겼어요. 필요할 때 언제든 다시 꺼내볼 수 있습니다."
+      confirm-text="확인"
+      :show-cancel="false"
+      icon="sparkles"
+      @close="closeSaveModal"
+      @confirm="closeSaveModal"
+    />
+
+    <AmuletActionModal
+      :open="showDeleteModal"
+      title="이 부적을 삭제하시겠습니까?"
+      description="보관함에서 삭제하면 다시 되돌릴 수 없습니다. 정말 이 부적을 지울까요?"
+      confirm-text="삭제하기"
+      cancel-text="취소"
+      confirm-tone="danger"
+      icon="trash"
+      @close="closeDeleteModal"
+      @confirm="confirmDeleteCharm"
+    />
   </div>
 </template>
 
