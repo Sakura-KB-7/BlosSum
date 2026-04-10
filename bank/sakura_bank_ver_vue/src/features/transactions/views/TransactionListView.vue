@@ -16,6 +16,7 @@ const typeFilter = ref('');
 const categoryFilter = ref('');
 const from = ref('');
 const to = ref('');
+const dateSort = ref('desc');
 
 // 페이지네이션
 const currentPage = ref(1);
@@ -35,7 +36,12 @@ const rows = computed(() => {
     from: from.value || undefined,
     to: to.value || undefined,
   });
-  return data || [];
+  const sorted = [...(data || [])].sort((a, b) => {
+    const aTime = new Date(a.date).getTime();
+    const bTime = new Date(b.date).getTime();
+    return dateSort.value === 'asc' ? aTime - bTime : bTime - aTime;
+  });
+  return sorted;
 });
 
 // 현재 페이지에 보여줄 데이터
@@ -51,7 +57,7 @@ const paginatedRows = computed(() => {
 
 // 전체 페이지 수 계산
 const totalPages = computed(() =>
-  rows.value.length > 0 ? Math.ceil(rows.value.length / itemsPerPage) : 0,
+  rows.value.length > 0 ? Math.ceil(rows.value.length / itemsPerPage) : 0
 );
 
 // 레이아웃 유지를 위한 빈 행 계산
@@ -61,7 +67,7 @@ const emptyRowsCount = computed(() => {
 });
 
 // 필터가 변경되면 1페이지로 리셋
-watch([typeFilter, categoryFilter, from, to], () => {
+watch([typeFilter, categoryFilter, from, to, dateSort], () => {
   currentPage.value = 1;
 });
 
@@ -96,9 +102,7 @@ const categoryOptions = computed(() => {
   <div class="space-y-6">
     <div>
       <h1 class="text-2xl font-bold text-foreground">거래 내역 💸</h1>
-      <p class="text-muted-foreground">
-        소중한 기록들을 한눈에 확인하고 관리해 보세요
-      </p>
+      <p class="text-muted-foreground">소중한 기록들을 한눈에 확인하고 관리해 보세요</p>
     </div>
 
     <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm">
@@ -142,33 +146,34 @@ const categoryOptions = computed(() => {
             class="rounded-lg border border-input bg-background px-3 py-2 text-sm"
           />
         </div>
+        <div class="flex flex-1 min-w-[170px] flex-col gap-1">
+          <label class="text-xs text-muted-foreground">날짜 정렬</label>
+          <select
+            v-model="dateSort"
+            class="rounded-lg border border-input bg-background px-3 py-2 text-sm"
+          >
+            <option value="desc">최신순 (내림차순)</option>
+            <option value="asc">오래된순 (오름차순)</option>
+          </select>
+        </div>
         <RouterLink to="/transactions/new" class="ml-auto w-full sm:w-auto">
-          <UiButton
-            class="rounded-full bg-primary text-primary-foreground w-full"
+          <UiButton class="rounded-full bg-primary text-primary-foreground w-full"
             >새 거래</UiButton
           >
         </RouterLink>
       </div>
     </UiCard>
 
-    <div
-      v-if="budget.loading"
-      class="p-20 text-center text-sm text-muted-foreground"
-    >
+    <div v-if="budget.loading" class="p-20 text-center text-sm text-muted-foreground">
       데이터를 불러오는 중입니다...
     </div>
 
-    <UiCard
-      v-else
-      class="border-none bg-card/80 shadow-sm backdrop-blur-sm overflow-hidden"
-    >
+    <UiCard v-else class="border-none bg-card/80 shadow-sm backdrop-blur-sm overflow-hidden">
       <div class="overflow-x-auto">
         <div class="inline-block min-w-[900px] w-full align-middle p-2">
           <table class="w-full border-collapse text-sm table-fixed">
             <thead>
-              <tr
-                class="border-b border-border text-left text-muted-foreground"
-              >
+              <tr class="border-b border-border text-left text-muted-foreground">
                 <th class="px-5 py-2 font-medium w-[140px]">날짜</th>
                 <th class="px-5 py-2 font-medium w-[120px]">구분</th>
                 <th class="px-5 py-2 font-medium w-[120px]">카테고리</th>
@@ -191,7 +196,7 @@ const categoryOptions = computed(() => {
                   :class="
                     cn(
                       'px-5 py-2 font-bold',
-                      r.type === 'income' ? 'text-blue-500' : 'text-pink-500',
+                      r.type === 'income' ? 'text-blue-500' : 'text-pink-500'
                     )
                   "
                 >
@@ -207,21 +212,17 @@ const categoryOptions = computed(() => {
                   :class="
                     cn(
                       'px-5 py-2 font-bold whitespace-nowrap tabular-nums',
-                      r.type === 'income' ? 'text-blue-500' : 'text-pink-500',
+                      r.type === 'income' ? 'text-blue-500' : 'text-pink-500'
                     )
                   "
                 >
                   {{ r.type === 'income' ? '+' : '-' }}{{ won(r.amount) }}
                 </td>
-                <td
-                  class="px-5 py-2 truncate text-muted-foreground italic opacity-70"
-                >
+                <td class="px-5 py-2 truncate text-muted-foreground italic opacity-70">
                   {{ r.memo || '-' }}
                 </td>
                 <td class="px-5 py-2 text-right">
-                  <div
-                    class="flex justify-end gap-1 whitespace-nowrap shrink-0"
-                  >
+                  <div class="flex justify-end gap-1 whitespace-nowrap shrink-0">
                     <UiButton
                       variant="ghost"
                       size="sm"
@@ -254,10 +255,7 @@ const categoryOptions = computed(() => {
         </div>
       </div>
 
-      <p
-        v-if="rows.length === 0"
-        class="p-20 text-center text-sm text-muted-foreground"
-      >
+      <p v-if="rows.length === 0" class="p-20 text-center text-sm text-muted-foreground">
         조건에 맞는 거래 내역이 없습니다.
       </p>
 

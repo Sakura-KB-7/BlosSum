@@ -16,6 +16,7 @@ const charmConfig = reactive({
 
 // 저장된 부적 목록
 const savedCharms = ref([]);
+const isSaveModalOpen = ref(false);
 const loadingStore = useLoadingStore();
 
 // [추가] 페이지 로드 시 로컬 스토리지에서 부적 불러오기
@@ -131,19 +132,22 @@ const handleSave = async () => {
 
     // 브라우저 저장소에 동기화
     localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
-    alert('행운이 보관함에 저장되었습니다! 🌸');
+    isSaveModalOpen.value = true;
   } finally {
     loadingStore.hideOverlay();
   }
 };
 
+const closeSaveModal = () => {
+  isSaveModalOpen.value = false;
+};
+
+const showDeleteModal = ref(false);
+const deletingCharmId = ref(null);
+
 function requestDeleteCharm(id) {
   deletingCharmId.value = id;
   showDeleteModal.value = true;
-}
-
-function closeSaveModal() {
-  showSaveModal.value = false;
 }
 
 function closeDeleteModal() {
@@ -407,28 +411,51 @@ const getAdjustedFrame = (frameId, themeId) => {
       </div>
     </UiCard>
 
-    <AmuletActionModal
-      :open="showSaveModal"
-      title="행운이 보관함에 저장되었습니다!"
-      description="방금 만든 부적이 보관함에 잘 담겼어요. 필요할 때 언제든 다시 꺼내볼 수 있습니다."
-      confirm-text="확인"
-      :show-cancel="false"
-      icon="sparkles"
-      @close="closeSaveModal"
-      @confirm="closeSaveModal"
-    />
+    <div
+      v-if="isSaveModalOpen"
+      class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 px-4"
+      @click.self="closeSaveModal"
+    >
+      <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+        <p class="text-3xl">🌸</p>
+        <h3 class="mt-3 text-lg font-bold text-foreground">부적 저장 완료</h3>
+        <p class="mt-2 text-sm text-muted-foreground">행운이 보관함에 안전하게 저장되었습니다.</p>
+        <button
+          class="mt-5 inline-flex h-10 items-center justify-center rounded-xl bg-[#E07A9B] px-5 text-sm font-semibold text-white transition hover:bg-[#F0A8C2]"
+          @click="closeSaveModal"
+        >
+          확인
+        </button>
+      </div>
+    </div>
 
-    <AmuletActionModal
-      :open="showDeleteModal"
-      title="이 부적을 삭제하시겠습니까?"
-      description="보관함에서 삭제하면 다시 되돌릴 수 없습니다. 정말 이 부적을 지울까요?"
-      confirm-text="삭제하기"
-      cancel-text="취소"
-      confirm-tone="danger"
-      icon="trash"
-      @close="closeDeleteModal"
-      @confirm="confirmDeleteCharm"
-    />
+    <div
+      v-if="showDeleteModal"
+      class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 px-4"
+      @click.self="closeDeleteModal"
+    >
+      <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+        <p class="text-3xl">🗑️</p>
+        <h3 class="mt-3 text-lg font-bold text-foreground">이 부적을 삭제할까요?</h3>
+        <p class="mt-2 text-sm text-muted-foreground">
+          삭제하면 다시 복구할 수 없습니다.
+        </p>
+        <div class="mt-5 flex items-center justify-center gap-2">
+          <button
+            class="inline-flex h-10 items-center justify-center rounded-xl border border-border px-5 text-sm font-semibold text-foreground transition hover:bg-muted"
+            @click="closeDeleteModal"
+          >
+            취소
+          </button>
+          <button
+            class="inline-flex h-10 items-center justify-center rounded-xl bg-rose-500 px-5 text-sm font-semibold text-white transition hover:bg-rose-600"
+            @click="confirmDeleteCharm"
+          >
+            삭제
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
