@@ -66,18 +66,29 @@ const emit = defineEmits([
       >
         <div class="flex items-start justify-between gap-3">
           <!-- 카드 본문 클릭은 해당 저장 장소를 지도 중심으로 가져오는 액션이다. -->
-          <button type="button" class="min-w-0 text-left" @click="emit('focus-place', place)">
+          <button
+            type="button"
+            class="min-w-0 flex-1 overflow-hidden text-left"
+            @click="emit('focus-place', place)"
+          >
             <div class="flex items-center gap-2">
               <MapPin class="h-4 w-4 shrink-0 text-primary" />
-              <p class="truncate font-semibold text-foreground">{{ place.placeName }}</p>
+              <p class="truncate font-semibold text-foreground">
+                {{ place.placeName }}
+              </p>
             </div>
             <p class="mt-1 text-xs font-medium text-primary/80">{{ place.category || '기타' }}</p>
-            <p class="mt-1 text-sm text-muted-foreground">
+            <p class="mt-1 break-words text-sm leading-5 text-muted-foreground">
               {{ place.roadAddressName || place.addressName || '주소 정보 없음' }}
             </p>
-            <p v-if="place.memo" class="mt-2 text-sm text-foreground/80">{{ place.memo }}</p>
+            <p
+              v-if="place.memo"
+              class="mt-2 break-words text-sm leading-5 text-foreground/80"
+            >
+              {{ place.memo }}
+            </p>
           </button>
-          <div class="flex items-center gap-2">
+          <div class="flex shrink-0 items-center gap-2">
             <!-- 수정, 외부 링크, 삭제를 각각 분리된 액션 버튼으로 둔다. -->
             <button
               type="button"
