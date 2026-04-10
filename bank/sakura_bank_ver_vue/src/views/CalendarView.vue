@@ -138,11 +138,9 @@ const calendarCells = computed(() => {
       </UiButton>
     </div>
 
-    <div class="flex flex-col gap-6 lg:flex-row">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-stretch">
       <div class="min-w-0 flex-1">
-        <UiCard
-          class="border-none bg-card/80 shadow-sm backdrop-blur-sm lg:h-[calc(100vh-11rem)] lg:overflow-hidden"
-        >
+        <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm lg:flex lg:flex-col">
           <div class="flex flex-row items-center justify-between p-6">
             <UiButton variant="ghost" size="icon" @click="prevMonth">
               <ChevronLeft class="h-5 w-5" />
@@ -152,7 +150,7 @@ const calendarCells = computed(() => {
               <ChevronRight class="h-5 w-5" />
             </UiButton>
           </div>
-          <div class="px-6 pb-6 lg:flex-1 lg:overflow-auto">
+          <div class="px-6 pb-6">
             <div class="mb-2 grid grid-cols-7 gap-1">
               <div
                 v-for="d in DAYS"
@@ -220,9 +218,9 @@ const calendarCells = computed(() => {
         </UiCard>
       </div>
 
-      <aside class="hidden w-80 shrink-0 lg:block">
+      <aside class="hidden w-80 shrink-0 lg:block lg:self-stretch">
         <UiCard
-          class="sticky top-6 border-none bg-card/80 shadow-sm backdrop-blur-sm lg:h-[calc(100vh-11rem)]"
+          class="border-none bg-card/80 shadow-sm backdrop-blur-sm lg:flex lg:h-full lg:flex-col lg:overflow-hidden"
         >
           <div v-if="showPanel" class="flex h-full flex-col">
             <div class="flex items-center justify-between border-b border-border p-4">
