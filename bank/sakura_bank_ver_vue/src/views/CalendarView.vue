@@ -87,6 +87,13 @@ const selectedExpenses = computed(() =>
   selectedDate.value ? expensesByDay.value[selectedDate.value] || [] : []
 );
 
+const selectedNetAmount = computed(() =>
+  selectedExpenses.value.reduce((sum, e) => {
+    const amount = Number(e.amount || 0);
+    return e.type === 'income' ? sum + amount : sum - amount;
+  }, 0)
+);
+
 function formatAmount(value) {
   return new Intl.NumberFormat('ko-KR').format(Number(value || 0)) + '원';
 }
@@ -252,7 +259,7 @@ const calendarCells = computed(() => {
               <div class="mt-4 rounded-xl bg-primary/10 p-3 text-center">
                 <p class="text-sm text-muted-foreground">선택일 총합</p>
                 <p class="text-xl font-bold text-primary">
-                  {{ formatAmount(selectedExpenses.reduce((sum, e) => sum + e.amount, 0)) }}
+                  {{ formatAmount(selectedNetAmount) }}
                 </p>
               </div>
             </div>
@@ -314,7 +321,7 @@ const calendarCells = computed(() => {
             <div class="mt-4 rounded-xl bg-primary/10 p-3 text-center">
               <p class="text-sm text-muted-foreground">선택일 총합</p>
               <p class="text-xl font-bold text-primary">
-                {{ formatAmount(selectedExpenses.reduce((sum, e) => sum + e.amount, 0)) }}
+                {{ formatAmount(selectedNetAmount) }}
               </p>
             </div>
           </div>
