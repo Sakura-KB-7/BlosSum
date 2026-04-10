@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import {
   Home,
   Calendar,
@@ -13,14 +13,18 @@ import {
   Settings,
   BarChart3,
   ScanLine,
+  DoorOpen,
 } from 'lucide-vue-next';
 import { cn } from '@/shared/lib/utils';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
+import { useAuthStore } from '@/stores/auth';
 import { useProfileStore } from '@/stores/profile';
 
 const route = useRoute();
+const router = useRouter();
 const collapsed = ref(false);
+const auth = useAuthStore();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
 const profile = useProfileStore();
@@ -29,7 +33,7 @@ const navItems = [
   { id: 'dashboard', label: '내 지갑', to: '/dashboard', icon: Home },
   { id: 'calendar', label: '캘린더 가계부', to: '/calendar', icon: Calendar },
   { id: 'statistics', label: '소비 통계', to: '/statistics', icon: BarChart3 },
-  { id: 'amulet', label: '부적 콜렉션', to: '/amulet', icon: Sparkles },
+  { id: 'amulet', label: '부적 꾸미기', to: '/amulet', icon: Sparkles },
   { id: 'map', label: '소비 지도', to: '/map', icon: Map },
   { id: 'newsletter', label: 'AI 소식지', to: '/newsletter', icon: Newspaper },
 ];
@@ -52,6 +56,11 @@ function isExtraActive(item) {
   return route.path === item.to;
 }
 
+function onLogout() {
+  auth.logout();
+  router.push({ name: 'login' });
+}
+
 onMounted(async () => {
   await Promise.all([
     budget.fetchAll(),
@@ -65,7 +74,7 @@ onMounted(async () => {
   <aside
     :class="
       cn(
-        'relative flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300',
+        'sticky top-0 z-20 flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar',
         collapsed ? 'w-16' : 'w-64',
       )
     "
@@ -79,8 +88,7 @@ onMounted(async () => {
         🌸
       </div>
       <div v-if="!collapsed" class="flex flex-col">
-        <span class="font-semibold text-sidebar-foreground">봄지갑</span>
-        <span class="text-xs text-muted-foreground">Spring Wallet</span>
+        <span class="font-semibold text-pink-400">MoneyBlosSum</span>
       </div>
     </div>
 
@@ -122,14 +130,6 @@ onMounted(async () => {
         />
         <span v-if="!collapsed">{{ item.label }}</span>
       </RouterLink>
-
-      <div
-        v-if="!collapsed"
-        class="px-1 pt-3 text-xs font-semibold text-muted-foreground"
-      >
-        과제 메뉴
-      </div>
-
       <RouterLink
         v-for="item in extraItems"
         :key="item.id"
@@ -146,6 +146,20 @@ onMounted(async () => {
         <component :is="item.icon" class="h-5 w-5 shrink-0" />
         <span v-if="!collapsed">{{ item.label }}</span>
       </RouterLink>
+
+      <button
+        type="button"
+        :class="
+          cn(
+            'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+            'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-primary',
+          )
+        "
+        @click="onLogout"
+      >
+        <DoorOpen class="h-5 w-5 shrink-0" />
+        <span v-if="!collapsed">로그아웃</span>
+      </button>
     </nav>
 
     <button
@@ -156,15 +170,5 @@ onMounted(async () => {
       <ChevronRight v-if="collapsed" class="h-3 w-3" />
       <ChevronLeft v-else class="h-3 w-3" />
     </button>
-
-    <div v-if="!collapsed" class="border-t border-sidebar-border p-4">
-      <div class="rounded-xl bg-primary/10 p-3 text-center">
-        <p class="text-xs text-muted-foreground">이번 달 절약 목표</p>
-        <p class="text-lg font-bold text-primary">72%</p>
-        <div class="mt-2 h-2 overflow-hidden rounded-full bg-primary/20">
-          <div class="h-full w-[72%] rounded-full bg-primary transition-all" />
-        </div>
-      </div>
-    </div>
   </aside>
 </template>

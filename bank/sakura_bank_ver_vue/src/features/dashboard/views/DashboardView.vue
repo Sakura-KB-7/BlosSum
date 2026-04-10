@@ -13,7 +13,6 @@ import {
 } from 'lucide-vue-next';
 
 import UiCard from '@/shared/ui/UiCard.vue';
-import UiButton from '@/shared/ui/UiButton.vue';
 import StatCard from '../components/StatCard.vue';
 import CategoryPie from '../components/CategoryPie.vue';
 import NewsletterWidget from '../components/NewsletterWidget.vue';
@@ -22,11 +21,11 @@ import ReceiptWidget from '../components/ReceiptWidget.vue';
 
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
+  
 import { useAuthStore } from '@/stores/auth';
 import { cn } from '@/shared/lib/utils';
 
 const router = useRouter();
-const auth = useAuthStore();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
 
@@ -233,11 +232,6 @@ onMounted(async () => {
     if (charms.length > 0) latestCharm.value = charms[0];
   }
 });
-
-function onLogout() {
-  auth.logout();
-  router.push({ name: 'login' });
-}
 </script>
 
 <template>
