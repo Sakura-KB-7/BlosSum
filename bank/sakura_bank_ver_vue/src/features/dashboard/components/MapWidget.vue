@@ -22,6 +22,10 @@ import { cn } from '@/shared/lib/utils';
       />
 
       <div class="relative z-10 flex items-center justify-between flex-none">
+        <div class="inline-flex p-3 bg-blue-50 rounded-2xl">
+          <MapPin class="h-6 w-6 text-blue-500" />
+        </div>
+
         <div
           class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 rounded-full shadow-inner"
         >
@@ -38,7 +42,7 @@ import { cn } from '@/shared/lib/utils';
 
       <div class="relative z-10 h-16 flex flex-col justify-end space-y-1">
         <h3 class="text-lg font-bold flex items-center gap-2 text-slate-900">
-          나의 소비지도
+          나의 소비 지도
           <ArrowRight
             class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0 text-blue-500"
           />
