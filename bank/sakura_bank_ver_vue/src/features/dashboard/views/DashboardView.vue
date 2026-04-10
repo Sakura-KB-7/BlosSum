@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   TrendingDown,
@@ -9,6 +9,7 @@ import {
   ArrowUpRight,
   ArrowRight,
   PieChart as PieChartIcon,
+  Sparkles,
 } from 'lucide-vue-next';
 
 import UiCard from '@/shared/ui/UiCard.vue';
@@ -22,11 +23,14 @@ import ReceiptWidget from '../components/ReceiptWidget.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { useAuthStore } from '@/stores/auth';
+import { cn } from '@/shared/lib/utils';
 
 const router = useRouter();
 const auth = useAuthStore();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
+
+const latestCharm = ref(null);
 
 // 날짜 데이터
 const today = new Date();
@@ -38,7 +42,6 @@ const previousMonthDate = new Date(currentYear, today.getMonth() - 1, 1);
 const previousYear = previousMonthDate.getFullYear();
 const previousMonth = previousMonthDate.getMonth() + 1;
 
-// 날짜 헤더
 const dateLabel = computed(() =>
   new Intl.DateTimeFormat('ko-KR', {
     year: 'numeric',
@@ -51,7 +54,7 @@ const dateLabel = computed(() =>
 const formatAmount = (val) =>
   new Intl.NumberFormat('ko-KR').format(Number(val || 0)) + '원';
 
-// [1] 이번 달 내역 필터링
+// 내역 필터링
 const currentMonthRows = computed(() =>
   budget.items.filter((row) => {
     const d = new Date(row.date);
@@ -59,7 +62,6 @@ const currentMonthRows = computed(() =>
   }),
 );
 
-// [2] 지난 달 내역 필터링
 const previousMonthRows = computed(() =>
   budget.items.filter((row) => {
     const d = new Date(row.date);
@@ -69,9 +71,7 @@ const previousMonthRows = computed(() =>
   }),
 );
 
-// ----- 계산 로직 -----
-
-// 이번 달 수입/지출 합계
+// 합계 계산
 const currentIncomeTotal = computed(() =>
   currentMonthRows.value
     .filter((r) => r.type === 'income')
@@ -84,31 +84,27 @@ const currentExpenseTotal = computed(() =>
     .reduce((s, r) => s + Number(r.amount || 0), 0),
 );
 
-// 지난 달 지출 합계
 const previousExpenseTotal = computed(() =>
   previousMonthRows.value
     .filter((r) => r.type === 'expense')
     .reduce((s, r) => s + Number(r.amount || 0), 0),
 );
 
-// 증감률
 const percentChange = computed(() => {
   const prev = previousExpenseTotal.value;
   if (prev <= 0) return '0.0';
   return (((currentExpenseTotal.value - prev) / prev) * 100).toFixed(1);
 });
 
-// 이번 달 소비율
 const budgetUsageRate = computed(() => {
   const income = currentIncomeTotal.value;
   if (!income || income <= 0) return 0;
   return (currentExpenseTotal.value / income) * 100;
 });
 
-// 이번 달 여유 자금
-const remainingBalance = computed(() => {
-  return Math.max(currentIncomeTotal.value - currentExpenseTotal.value, 0);
-});
+const remainingBalance = computed(() =>
+  Math.max(currentIncomeTotal.value - currentExpenseTotal.value, 0),
+);
 
 // 차트 데이터
 const categoryMap = computed(() =>
@@ -135,8 +131,45 @@ const pieData = computed(() => {
     .sort((a, b) => b.value - a.value);
 });
 
+// src/features/dashboard/views/DashboardView.vue 내부의 getThemeClass 수정
+
+const getThemeClass = (themeId) => {
+  const maps = {
+    pink: 'bg-gradient-to-br from-[#FFF0F6] to-[#FFE0EC] text-[#3C3028]',
+    gold: 'bg-gradient-to-br from-[#FFFBF0] to-[#FFF5DC] text-[#3C3028]',
+    mint: 'bg-gradient-to-br from-[#F0FFF8] to-[#DCFFF0] text-[#3C3028]',
+    sky: 'bg-gradient-to-br from-[#F0F8FF] to-[#DDF0FF] text-[#3C3028]',
+    purple: 'bg-gradient-to-br from-[#F5F3FF] to-[#EDE9FE] text-[#3C3028]',
+    peach: 'bg-gradient-to-br from-[#FFF5F1] to-[#FFE4D5] text-[#3C3028]',
+    midnight: 'bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-white',
+    // [추가된 테마들]
+    lavender: 'bg-gradient-to-br from-[#F3E8FF] to-[#E9D5FF] text-[#3C3028]',
+    sunset: 'bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] text-[#3C3028]',
+    forest: 'bg-gradient-to-br from-[#D1FAE5] to-[#A7F3D0] text-[#166534]',
+    ocean: 'bg-gradient-to-br from-[#E0F2FE] to-[#BAE6FD] text-[#0369A1]',
+    berry: 'bg-gradient-to-br from-[#FCE7F3] to-[#FBCFE8] text-[#9D174D]',
+  };
+  return maps[themeId] || maps.pink;
+};
+
+const emojiMap = {
+  koala: '🐨',
+  dragon: '🐲',
+  clover: '🍀',
+  rabbit: '🐰',
+  cat: '🐱',
+  money: '💰',
+  star: '⭐',
+  heart: '💖',
+};
+
 onMounted(async () => {
   await Promise.all([budget.fetchAll(), categories.fetchAll()]);
+  const charmData = localStorage.getItem('my-saved-charms');
+  if (charmData) {
+    const charms = JSON.parse(charmData);
+    if (charms.length > 0) latestCharm.value = charms[0];
+  }
 });
 
 function onLogout() {
@@ -158,9 +191,8 @@ function onLogout() {
         variant="outline"
         class="rounded-full shadow-sm"
         @click="onLogout"
+        >로그아웃</UiButton
       >
-        로그아웃
-      </UiButton>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
@@ -197,7 +229,7 @@ function onLogout() {
       >
         <template #footer>
           <p class="text-[10px] text-muted-foreground mt-1 italic">
-            * 이번 달 기록된 모든 수입의 합계입니다.
+            * 이번 달 기록된 수입 합계입니다.
           </p>
         </template>
       </StatCard>
@@ -217,26 +249,19 @@ function onLogout() {
             >
             <span
               class="text-[13px] font-bold text-amber-600 whitespace-nowrap"
+              >{{ formatAmount(remainingBalance) }}</span
             >
-              {{ formatAmount(remainingBalance) }}
-            </span>
           </div>
         </template>
-
         <template #footer>
           <div class="w-full mt-1">
             <div class="h-1.5 overflow-hidden rounded-full bg-amber-100">
               <div
-                class="h-full transition-all duration-700 ease-out"
+                class="h-full transition-all duration-700"
                 :class="budgetUsageRate > 100 ? 'bg-red-500' : 'bg-amber-500'"
                 :style="{ width: `${Math.min(budgetUsageRate, 100)}%` }"
               />
             </div>
-            <p
-              class="text-[10px] text-transparent mt-1.5 italic select-none leading-none"
-            >
-              Spacer
-            </p>
           </div>
         </template>
       </StatCard>
@@ -253,19 +278,16 @@ function onLogout() {
               <div class="inline-flex p-3 bg-violet-100 rounded-2xl shrink-0">
                 <PieChartIcon class="h-6 w-6 text-violet-600" />
               </div>
-
               <h2 class="text-lg font-bold text-foreground tracking-tight">
                 카테고리별 지출 현황
               </h2>
             </div>
-
             <div
               class="text-xs text-muted-foreground flex items-center gap-1 opacity-80 hover:opacity-100 transition-opacity"
             >
               상세보기 <ArrowRight class="h-3 w-3" />
             </div>
           </div>
-
           <div class="px-6 pb-6 flex-1 flex items-center">
             <CategoryPie :data="pieData" />
           </div>
@@ -274,9 +296,120 @@ function onLogout() {
 
       <div class="hidden lg:block">
         <UiCard
-          class="h-full p-6 border-dashed border-2 flex items-center justify-center text-muted-foreground"
+          class="h-full border-none bg-card/80 shadow-sm backdrop-blur-sm cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all flex flex-col overflow-hidden group relative"
+          @click="router.push('/amulet')"
         >
-          부적 위젯 추가 예정
+          <div
+            class="absolute -bottom-10 -right-10 w-40 h-40 bg-amber-100 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none"
+          ></div>
+          <div
+            class="absolute -top-10 -left-10 w-32 h-32 bg-pink-100 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-700 pointer-events-none"
+          ></div>
+
+          <div class="p-6 pb-2 flex justify-between items-center relative z-10">
+            <div class="flex items-center gap-4">
+              <div
+                class="inline-flex p-3 bg-amber-100 rounded-2xl shrink-0 group-hover:bg-amber-200 transition-colors shadow-inner"
+              >
+                <Sparkles class="h-6 w-6 text-amber-600" />
+              </div>
+              <h2 class="text-lg font-bold text-foreground tracking-tight">
+                부적 꾸미기
+              </h2>
+            </div>
+            <div
+              class="text-xs text-muted-foreground flex items-center gap-1 opacity-80 group-hover:opacity-100 group-hover:text-primary transition-all"
+            >
+              꾸미러 가기 <ArrowRight class="h-3 w-3" />
+            </div>
+          </div>
+
+          <div
+            class="px-6 pb-4 flex-1 flex items-center justify-center relative z-10"
+          >
+            <div
+              v-if="latestCharm"
+              :class="
+                cn(
+                  'w-40 h-60 rounded-3xl shadow-2xl flex flex-col items-center justify-center p-6 text-center border-4 border-white relative transition-all duration-500 group-hover:scale-105 group-hover:rotate-1 z-20',
+                  getThemeClass(latestCharm.colorTheme),
+                )
+              "
+            >
+              <div
+                class="absolute inset-3 border-2 border-current opacity-10 rounded-2xl pointer-events-none"
+              ></div>
+              <div
+                class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-8 bg-white/40 rounded-t-full border-2 border-white shadow-inner"
+              ></div>
+
+              <span
+                class="text-6xl mb-4 relative z-10 drop-shadow-lg group-hover:scale-110 transition-transform duration-500"
+              >
+                {{ emojiMap[latestCharm.character] }}
+              </span>
+              <p
+                class="text-xs font-black leading-snug italic relative z-10 line-clamp-4 break-keep"
+              >
+                {{ latestCharm.message }}
+              </p>
+            </div>
+
+            <div
+              v-else
+              class="text-center flex flex-col items-center relative group-hover:scale-105 transition-transform duration-500 z-20"
+            >
+              <div
+                class="absolute inset-0 flex items-center justify-center pointer-events-none"
+              >
+                <div
+                  class="w-48 h-64 bg-amber-100/30 rounded-full blur-2xl animate-pulse"
+                ></div>
+              </div>
+
+              <div
+                class="w-40 h-60 rounded-3xl border-4 border-dashed border-amber-300 bg-amber-50/70 shadow-2xl flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
+              >
+                <div
+                  class="absolute inset-0 opacity-[0.06] text-[8px] flex flex-wrap gap-1 p-3 select-none pointer-events-none"
+                >
+                  ✨ 🌟 💫 ✨ 🌟 💫 ✨ 🌟 💫 ✨ 🌟 💫
+                </div>
+                <div
+                  class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-8 bg-pink-50/80 rounded-t-full border-2 border-white shadow-md z-10"
+                ></div>
+                <div class="relative z-10 mb-4">
+                  <Sparkles
+                    class="absolute -inset-6 h-20 w-20 text-amber-300 opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all duration-1000"
+                  />
+                  <span
+                    class="text-6xl relative z-20 drop-shadow-xl group-hover:animate-pulse"
+                    >🔮</span
+                  >
+                </div>
+                <div class="relative z-10">
+                  <p
+                    class="text-[11px] text-amber-950 font-black italic tracking-tighter leading-tight"
+                  >
+                    행운의 주문을
+                  </p>
+                  <p
+                    class="text-[9px] text-amber-900/60 font-bold tracking-tight"
+                  >
+                    비워두었어요
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pb-6 text-center relative z-30">
+            <p
+              class="text-xs text-muted-foreground font-medium italic group-hover:text-primary transition-colors"
+            >
+              여기를 눌러 행운을 채우세요! 🌸
+            </p>
+          </div>
         </UiCard>
       </div>
     </div>
@@ -288,3 +421,21 @@ function onLogout() {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 추가적인 미세 조정이 필요할 경우 작성 */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+.animate-pulse {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>

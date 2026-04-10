@@ -1,16 +1,6 @@
 <script setup>
-import { reactive, ref } from 'vue';
-import {
-  Download,
-  RotateCcw,
-  Trash2,
-  Heart,
-  Sparkles,
-  LayoutGrid,
-  Palette,
-  Sticker,
-  PenLine,
-} from 'lucide-vue-next';
+import { reactive, ref, onMounted } from 'vue';
+import { Download, RotateCcw, Trash2, Heart, Sparkles } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
 
@@ -25,6 +15,14 @@ const charmConfig = reactive({
 
 // 저장된 부적 목록
 const savedCharms = ref([]);
+
+// [추가] 페이지 로드 시 로컬 스토리지에서 부적 불러오기
+onMounted(() => {
+  const data = localStorage.getItem('my-saved-charms');
+  if (data) {
+    savedCharms.value = JSON.parse(data);
+  }
+});
 
 const emojiMap = {
   koala: '🐨',
@@ -113,6 +111,7 @@ const frames = [
   },
 ];
 
+// [수정] 저장 시 로컬 스토리지에 기록
 const handleSave = () => {
   const newCharm = {
     id: Date.now(),
@@ -120,10 +119,18 @@ const handleSave = () => {
     date: new Date().toLocaleDateString(),
   };
   savedCharms.value.unshift(newCharm);
+
+  // 브라우저 저장소에 동기화
+  localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
+  alert('행운이 보관함에 저장되었습니다! 🌸');
 };
 
+// [수정] 삭제 시 로컬 스토리지에서도 제거
 const deleteCharm = (id) => {
-  savedCharms.value = savedCharms.value.filter((c) => c.id !== id);
+  if (confirm('이 부적을 삭제하시겠습니까?')) {
+    savedCharms.value = savedCharms.value.filter((c) => c.id !== id);
+    localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
+  }
 };
 
 const resetConfig = () => {
@@ -242,7 +249,7 @@ const getAdjustedFrame = (frameId, themeId) => {
 
               <section class="space-y-4">
                 <p
-                  class="text-[11px] font-bold text-[#BBA8AE] uppercase tracking-wider font-sans"
+                  class="text-[11px] font-bold text-[#BBA8AE] uppercase tracking-wider"
                 >
                   Lucky Symbol
                 </p>
@@ -346,9 +353,8 @@ const getAdjustedFrame = (frameId, themeId) => {
         <h2 class="text-[15px] font-bold text-[#333]">부적 보관함</h2>
         <span
           class="text-xs bg-gray-100 text-[#BBA8AE] px-3 py-1 rounded-full ml-auto font-medium"
+          >{{ savedCharms.length }}개의 부적</span
         >
-          {{ savedCharms.length }}개의 부적
-        </span>
       </div>
 
       <div
@@ -386,7 +392,6 @@ const getAdjustedFrame = (frameId, themeId) => {
                 getAdjustedFrame(charm.frameStyle, charm.colorTheme).style
               "
             />
-
             <div
               class="z-10 flex flex-col items-center gap-3 scale-[0.6] transform-gpu"
             >
@@ -395,11 +400,10 @@ const getAdjustedFrame = (frameId, themeId) => {
               >
                 "{{ charm.message }}"
               </h2>
-              <span class="text-6xl filter drop-shadow-sm">
-                {{ emojiMap[charm.character] }}
-              </span>
+              <span class="text-6xl filter drop-shadow-sm">{{
+                emojiMap[charm.character]
+              }}</span>
             </div>
-
             <button
               @click="deleteCharm(charm.id)"
               class="absolute top-1 right-1 p-1 bg-white/90 rounded-full text-gray-400 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500 hover:text-white shadow-sm z-20"
