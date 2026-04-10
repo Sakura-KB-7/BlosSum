@@ -26,6 +26,11 @@ const router = createRouter({
       name: 'signup',
       component: () => import('@/login/SignUpView.vue'),
     },
+    {
+      path: '/login-loading',
+      name: 'login-loading',
+      component: () => import('@/loading/views/LoginLoadingView.vue'),
+    },
 
     /**
      * [메인 서비스] 레이아웃 중첩 경로
@@ -38,8 +43,7 @@ const router = createRouter({
         {
           path: 'dashboard',
           name: 'dashboard',
-          component: () =>
-            import('@/features/dashboard/views/DashboardView.vue'),
+          component: () => import('@/features/dashboard/views/DashboardView.vue'),
         },
         /**
          * [수정] 부적 제작소 (Amulet) 경로 추가
@@ -68,20 +72,17 @@ const router = createRouter({
         {
           path: 'transactions',
           name: 'transactions',
-          component: () =>
-            import('@/features/transactions/views/TransactionListView.vue'),
+          component: () => import('@/features/transactions/views/TransactionListView.vue'),
         },
         {
           path: 'transactions/new',
           name: 'transaction-new',
-          component: () =>
-            import('@/features/transactions/views/TransactionFormView.vue'),
+          component: () => import('@/features/transactions/views/TransactionFormView.vue'),
         },
         {
           path: 'transactions/:id/edit',
           name: 'transaction-edit',
-          component: () =>
-            import('@/features/transactions/views/TransactionFormView.vue'),
+          component: () => import('@/features/transactions/views/TransactionFormView.vue'),
         },
         {
           path: 'settings',
@@ -111,8 +112,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   const auth = useAuthStore();
 
-  const isPublicPage =
-    to.name === 'login' || to.name === 'signup' || to.name === 'intro';
+  const isPublicPage = to.name === 'login' || to.name === 'signup' || to.name === 'intro';
 
   const isAuthPage = to.name === 'login' || to.name === 'signup';
 

@@ -51,7 +51,7 @@ async function onSubmit() {
     }
 
     auth.login(user.userId);
-    router.push({ name: 'dashboard' });
+    router.push({ name: 'login-loading', query: { redirect: 'dashboard' } });
   } catch (error) {
     errorMessage.value = '로그인하지 못했습니다. json-server 상태를 확인하세요.';
   } finally {

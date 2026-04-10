@@ -8,12 +8,14 @@ import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { useProfileStore } from '@/stores/profile';
 import { useAuthStore } from '@/stores/auth';
+import { useLoadingStore } from '@/stores/loading';
 import { generateNewsletter } from '@/features/newsletter/api/generateNewsletter';
 
 const budgetStore = useBudgetStore();
 const categoryStore = useCategoryStore();
 const profileStore = useProfileStore();
 const auth = useAuthStore();
+const loadingStore = useLoadingStore();
 
 const NEWSLETTER_LS_PREFIX = 'blosum_newsletter_v1_';
 
@@ -252,6 +254,11 @@ function cardMeta(cardType) {
 async function onGenerate() {
   isGenerating.value = true;
   errorMessage.value = '';
+  loadingStore.showOverlay({
+    context: 'newsletter',
+    title: 'AI 소식지를 생성하고 있어요',
+    description: '소비 패턴과 추천 정보를 정리하는 중입니다.',
+  });
   try {
     const payload = {
       totalExpense: currentMonthExpense.value,
@@ -267,6 +274,7 @@ async function onGenerate() {
     errorMessage.value = '소식지 생성에 실패했습니다. 잠시 후 다시 시도하세요.';
   } finally {
     isGenerating.value = false;
+    loadingStore.hideOverlay();
   }
 }
 

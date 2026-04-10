@@ -127,10 +127,12 @@ import { cn } from '@/shared/lib/utils';
 
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
+import { useLoadingStore } from '@/stores/loading';
 
 const router = useRouter();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
+const loadingStore = useLoadingStore();
 
 // 상태 관리
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_VISION_API_KEY; // API 키
@@ -192,6 +194,11 @@ const handleAnalyze = async (file) => {
   isStarted.value = true;
   isAnalyzing.value = true;
   extractedResult.value = null;
+  loadingStore.showOverlay({
+    context: 'receipt',
+    title: '영수증을 스캔하고 있어요',
+    description: '텍스트와 금액 정보를 추출하는 중입니다.',
+  });
 
   try {
     // [1] Google Vision OCR 실행
@@ -234,6 +241,7 @@ const handleAnalyze = async (file) => {
     });
   } finally {
     isAnalyzing.value = false;
+    loadingStore.hideOverlay();
   }
 };
 
