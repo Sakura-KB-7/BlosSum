@@ -20,7 +20,7 @@ const props = defineProps({
 - success: 저장 성공 시 부모에게 알림
 - cancel: 취소 버튼 클릭 시 폼 닫기 요청
 */
-const emit = defineEmits(['success', 'cancel']);
+const emit = defineEmits(['success', 'cancel', 'notify']);
 
 // 스토어 연결
 const budget = useBudgetStore();
@@ -123,15 +123,24 @@ function buildPayload() {
 async function onSubmit() {
   // 유효성 검사
   if (!date.value || amount.value == null) {
-    alert('날짜와 금액을 입력해 주세요.');
+    emit('notify', {
+      title: '입력값을 확인해 주세요',
+      description: '날짜와 금액을 입력해야 저장할 수 있습니다.',
+    });
     return;
   }
   if (!categoryId.value) {
-    alert('카테고리를 선택해 주세요.');
+    emit('notify', {
+      title: '카테고리를 선택해 주세요',
+      description: '지출 또는 수입에 맞는 카테고리를 먼저 골라 주세요.',
+    });
     return;
   }
   if (!title.value.trim()) {
-    alert('제목을 입력해 주세요.');
+    emit('notify', {
+      title: '제목을 입력해 주세요',
+      description: '거래 내역을 구분할 수 있는 제목이 필요합니다.',
+    });
     return;
   }
 
@@ -142,7 +151,10 @@ async function onSubmit() {
     emit('success'); // 부모 컴포넌트에 알림
   } catch (error) {
     console.error('Save Error:', error);
-    alert('저장에 실패했습니다.');
+    emit('notify', {
+      title: '저장에 실패했습니다',
+      description: '잠시 후 다시 시도해 주세요.',
+    });
   } finally {
     saving.value = false;
   }
