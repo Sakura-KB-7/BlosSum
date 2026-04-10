@@ -20,10 +20,12 @@ import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { useAuthStore } from '@/stores/auth';
 import { useProfileStore } from '@/stores/profile';
+import SidebarLogoutModal from '@/components/SidebarLogoutModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const collapsed = ref(false);
+const showLogoutModal = ref(false);
 const auth = useAuthStore();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
@@ -56,7 +58,16 @@ function isExtraActive(item) {
   return route.path === item.to;
 }
 
+function openLogoutModal() {
+  showLogoutModal.value = true;
+}
+
+function closeLogoutModal() {
+  showLogoutModal.value = false;
+}
+
 function onLogout() {
+  showLogoutModal.value = false;
   auth.logout();
   router.push({ name: 'login' });
 }
@@ -155,7 +166,7 @@ onMounted(async () => {
             'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-primary',
           )
         "
-        @click="onLogout"
+        @click="openLogoutModal"
       >
         <DoorOpen class="h-5 w-5 shrink-0" />
         <span v-if="!collapsed">로그아웃</span>
@@ -170,5 +181,11 @@ onMounted(async () => {
       <ChevronRight v-if="collapsed" class="h-3 w-3" />
       <ChevronLeft v-else class="h-3 w-3" />
     </button>
+
+    <SidebarLogoutModal
+      :open="showLogoutModal"
+      @close="closeLogoutModal"
+      @confirm="onLogout"
+    />
   </aside>
 </template>
