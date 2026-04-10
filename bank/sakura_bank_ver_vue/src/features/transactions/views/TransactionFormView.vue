@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
@@ -11,7 +11,9 @@ const router = useRouter();
 const budget = useBudgetStore();
 const categories = useCategoryStore();
 
-const isEdit = computed(() => typeof route.params.id === 'string' && route.params.id.length > 0);
+const isEdit = computed(
+  () => typeof route.params.id === 'string' && route.params.id.length > 0,
+);
 
 const date = ref('');
 const type = ref('expense');
@@ -25,7 +27,7 @@ const recurringDay = ref(null);
 const saving = ref(false);
 
 const categoryList = computed(() =>
-  type.value === 'income' ? categories.income : categories.expense
+  type.value === 'income' ? categories.income : categories.expense,
 );
 
 function applyTypeFromQuery() {
@@ -45,19 +47,22 @@ function applyDateFromQuery() {
   }
 }
 
-function loadFromRow() {
+async function loadFromRow() {
   const id = route.params.id;
   const row = budget.items.find((x) => String(x.id) === id);
   if (!row) return;
   date.value = row.date;
   type.value = row.type;
-  categoryId.value = row.categoryId;
   title.value = row.title;
   amount.value = row.amount;
   paymentMethod.value = row.paymentMethod;
   memo.value = row.memo;
   isFixed.value = row.isFixed;
   recurringDay.value = row.recurringDay ?? null;
+
+  // 카테고리 목록 그려진 후 id 할당
+  await nextTick();
+  categoryId.value = row.categoryId;
 }
 
 onMounted(async () => {
@@ -74,25 +79,28 @@ watch(
   () => route.params.id,
   () => {
     if (isEdit.value) loadFromRow();
-  }
+  },
 );
 
 watch(
   () => route.query.type,
   () => {
     applyTypeFromQuery();
-  }
+  },
 );
 
 watch(
   () => route.query.date,
   () => {
     applyDateFromQuery();
-  }
+  },
 );
 
-watch(type, () => {
-  categoryId.value = '';
+// 수정 시 카테고리 초기화되지 않도록
+watch(type, (newType, oldType) => {
+  if (oldType) {
+    categoryId.value = '';
+  }
 });
 
 function parseCategoryId() {
@@ -112,7 +120,11 @@ function buildPayload() {
     memo: memo.value || '',
     isFixed: isFixed.value,
   };
-  if (isFixed.value && recurringDay.value != null && !Number.isNaN(recurringDay.value)) {
+  if (
+    isFixed.value &&
+    recurringDay.value != null &&
+    !Number.isNaN(recurringDay.value)
+  ) {
     base.recurringDay = recurringDay.value;
   }
   return base;
@@ -153,14 +165,20 @@ function onCancel() {
 <template>
   <div class="space-y-6">
     <div>
-      <h1 class="text-2xl font-bold text-foreground">{{ isEdit ? '거래 수정' : '거래 등록' }}</h1>
-      <p class="text-muted-foreground">날짜·금액·카테고리·제목을 입력하고 저장하세요.</p>
+      <h1 class="text-2xl font-bold text-foreground">
+        {{ isEdit ? '거래 수정' : '거래 등록' }}
+      </h1>
+      <p class="text-muted-foreground">
+        날짜·금액·카테고리·제목을 입력하고 저장하세요.
+      </p>
     </div>
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
       <form class="flex flex-col gap-4 p-6" @submit.prevent="onSubmit">
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="d">날짜</label>
+          <label class="text-xs font-semibold text-foreground" for="d"
+            >날짜</label
+          >
           <input
             id="d"
             v-model="date"
@@ -170,7 +188,9 @@ function onCancel() {
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="t">구분</label>
+          <label class="text-xs font-semibold text-foreground" for="t"
+            >구분</label
+          >
           <select
             id="t"
             v-model="type"
@@ -181,7 +201,9 @@ function onCancel() {
           </select>
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="c">카테고리</label>
+          <label class="text-xs font-semibold text-foreground" for="c"
+            >카테고리</label
+          >
           <select
             id="c"
             v-model="categoryId"
@@ -195,7 +217,9 @@ function onCancel() {
           </select>
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="ti">제목</label>
+          <label class="text-xs font-semibold text-foreground" for="ti"
+            >제목</label
+          >
           <input
             id="ti"
             v-model="title"
@@ -206,7 +230,9 @@ function onCancel() {
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="pm">결제 수단</label>
+          <label class="text-xs font-semibold text-foreground" for="pm"
+            >결제 수단</label
+          >
           <select
             id="pm"
             v-model="paymentMethod"
@@ -219,7 +245,9 @@ function onCancel() {
           </select>
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="a">금액</label>
+          <label class="text-xs font-semibold text-foreground" for="a"
+            >금액</label
+          >
           <input
             id="a"
             v-model.number="amount"
@@ -231,7 +259,9 @@ function onCancel() {
           />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="m">메모</label>
+          <label class="text-xs font-semibold text-foreground" for="m"
+            >메모</label
+          >
           <textarea
             id="m"
             v-model="memo"
@@ -241,11 +271,18 @@ function onCancel() {
           />
         </div>
         <div class="flex items-center gap-2">
-          <input id="fx" v-model="isFixed" type="checkbox" class="rounded border-input" />
+          <input
+            id="fx"
+            v-model="isFixed"
+            type="checkbox"
+            class="rounded border-input"
+          />
           <label class="text-sm text-foreground" for="fx">고정 수입·지출</label>
         </div>
         <div v-if="isFixed" class="flex flex-col gap-1">
-          <label class="text-xs font-semibold text-foreground" for="rd">반복일 (매월)</label>
+          <label class="text-xs font-semibold text-foreground" for="rd"
+            >반복일 (매월)</label
+          >
           <input
             id="rd"
             v-model.number="recurringDay"
@@ -257,7 +294,9 @@ function onCancel() {
           />
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <UiButton type="button" variant="outline" @click="onCancel">취소</UiButton>
+          <UiButton type="button" variant="outline" @click="onCancel"
+            >취소</UiButton
+          >
           <UiButton type="submit" :disabled="saving">
             {{ saving ? '저장 중…' : '저장' }}
           </UiButton>
