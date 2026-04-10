@@ -158,9 +158,7 @@ function closeDeleteModal() {
 // [수정] 삭제 시 로컬 스토리지에서도 제거
 function confirmDeleteCharm() {
   if (!deletingCharmId.value) return;
-  savedCharms.value = savedCharms.value.filter(
-    (c) => c.id !== deletingCharmId.value,
-  );
+  savedCharms.value = savedCharms.value.filter((c) => c.id !== deletingCharmId.value);
   localStorage.setItem('my-saved-charms', JSON.stringify(savedCharms.value));
   closeDeleteModal();
 }
@@ -437,9 +435,7 @@ const getAdjustedFrame = (frameId, themeId) => {
       <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
         <p class="text-3xl">🗑️</p>
         <h3 class="mt-3 text-lg font-bold text-foreground">이 부적을 삭제할까요?</h3>
-        <p class="mt-2 text-sm text-muted-foreground">
-          삭제하면 다시 복구할 수 없습니다.
-        </p>
+        <p class="mt-2 text-sm text-muted-foreground">삭제하면 다시 복구할 수 없습니다.</p>
         <div class="mt-5 flex items-center justify-center gap-2">
           <button
             class="inline-flex h-10 items-center justify-center rounded-xl border border-border px-5 text-sm font-semibold text-foreground transition hover:bg-muted"
