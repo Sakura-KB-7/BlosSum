@@ -177,7 +177,7 @@ const getAdjustedFrame = (frameId, themeId) => {
   <div class="space-y-6">
     <div>
       <h1 class="text-2xl font-bold text-foreground flex items-center gap-2">
-        나만의 디지털 부적 제작소 🔮
+        부적 꾸미기 🔮
       </h1>
       <p class="text-muted-foreground">
         행운의 심볼과 문구를 조합해 나만의 부적을 만드세요.

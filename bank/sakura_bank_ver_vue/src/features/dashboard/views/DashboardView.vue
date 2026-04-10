@@ -131,8 +131,7 @@ const pieData = computed(() => {
     .sort((a, b) => b.value - a.value);
 });
 
-// src/features/dashboard/views/DashboardView.vue 내부의 getThemeClass 수정
-
+// [동기화] 부적 스타일 맵 (제작소와 동일하게 업데이트)
 const getThemeClass = (themeId) => {
   const maps = {
     pink: 'bg-gradient-to-br from-[#FFF0F6] to-[#FFE0EC] text-[#3C3028]',
@@ -142,7 +141,6 @@ const getThemeClass = (themeId) => {
     purple: 'bg-gradient-to-br from-[#F5F3FF] to-[#EDE9FE] text-[#3C3028]',
     peach: 'bg-gradient-to-br from-[#FFF5F1] to-[#FFE4D5] text-[#3C3028]',
     midnight: 'bg-gradient-to-br from-[#1E293B] to-[#0F172A] text-white',
-    // [추가된 테마들]
     lavender: 'bg-gradient-to-br from-[#F3E8FF] to-[#E9D5FF] text-[#3C3028]',
     sunset: 'bg-gradient-to-br from-[#FFF7ED] to-[#FFEDD5] text-[#3C3028]',
     forest: 'bg-gradient-to-br from-[#D1FAE5] to-[#A7F3D0] text-[#166534]',
@@ -152,6 +150,7 @@ const getThemeClass = (themeId) => {
   return maps[themeId] || maps.pink;
 };
 
+// [동기화] 이모지 맵 확장 (전체 리스트 반영)
 const emojiMap = {
   koala: '🐨',
   dragon: '🐲',
@@ -161,6 +160,69 @@ const emojiMap = {
   money: '💰',
   star: '⭐',
   heart: '💖',
+  bird: '🕊️',
+  moon: '🌙',
+  sun: '☀️',
+  peach: '🍑',
+  dog: '🐶',
+  fox: '🦊',
+  owl: '🦉',
+  unicorn: '🦄',
+};
+
+// [동기화] 프레임 스타일 정보
+const frames = [
+  { id: 'dashed', class: 'border-[3px] border-dashed border-black/20' },
+  { id: 'double', class: 'border-double border-[6px] border-black/15' },
+  {
+    id: 'wavy',
+    class: 'border-[10px]',
+    style:
+      "border-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2730%27 height=%2710%27 viewBox=%270 0 30 10%27%3E%3Cpath d=%27M0 5c5 0 5-5 10-5s5 5 10 5 5-5 10-5%27 stroke=%27%23000%27 stroke-opacity=%270.3%27 fill=%27none%27 stroke-width=%272%27/%3E%3C/svg%3E') 10 repeat;",
+  },
+  {
+    id: 'zigZag',
+    class: 'border-[12px]',
+    style:
+      "border-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2720%27 height=%2720%27 viewBox=%270 0 20 20%27%3E%3Cpolygon points=%2710,0 20,10 10,20 0,10%27 fill=%27%23000%27 fill-opacity=%270.2%27/%3E%3C/svg%3E') 10 repeat;",
+  },
+  {
+    id: 'neon',
+    class:
+      'border-[3px] border-pink-400 shadow-[0_0_15px_rgba(244,114,182,0.6)]',
+  },
+  {
+    id: 'ornate',
+    class: 'border-[12px]',
+    style:
+      "border-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2740%27 viewBox=%270 0 40 40%27%3E%3Cpath d=%27M20 5l5 10h10l-8 7 3 10-10-6-10 6 3-10-8-7h10z%27 fill=%27%23000%27 fill-opacity=%270.25%27/%3E%3C/svg%3E') 15 repeat;",
+  },
+  {
+    id: 'traditional',
+    class: 'border-[12px]',
+    style:
+      "border-image: url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2720%27 height=%2720%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M10 0v20M0 10h20M5 5l10 10M5 15L15 5%27 stroke=%27%23000%27 stroke-opacity=%270.4%27 fill=%27none%27 stroke-width=%272%27/%3E%3C/svg%3E') 10 repeat;",
+  },
+  {
+    id: 'sparkle',
+    class:
+      'border-[5px] border-dotted border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]',
+  },
+];
+
+// [동기화] 프레임 보정 함수
+const getAdjustedFrame = (frameId, themeId) => {
+  const frame = frames.find((f) => f.id === frameId) || frames[0];
+  let className = frame.class;
+  let style = frame.style || '';
+  const isDark = ['midnight', 'forest', 'ocean', 'berry'].includes(themeId);
+  if (isDark) {
+    className = className
+      .replace(/black/g, 'white')
+      .replace(/opacity-0.2/g, 'opacity-0.5');
+    style = style.replace(/%23000/g, '%23FFF');
+  }
+  return { className, style };
 };
 
 onMounted(async () => {
@@ -337,10 +399,21 @@ function onLogout() {
               "
             >
               <div
-                class="absolute inset-3 border-2 border-current opacity-10 rounded-2xl pointer-events-none"
-              ></div>
-              <div
-                class="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-8 bg-white/40 rounded-t-full border-2 border-white shadow-inner"
+                :class="
+                  cn(
+                    'absolute inset-3 rounded-[24px] pointer-events-none',
+                    getAdjustedFrame(
+                      latestCharm.frameStyle,
+                      latestCharm.colorTheme,
+                    ).className,
+                  )
+                "
+                :style="
+                  getAdjustedFrame(
+                    latestCharm.frameStyle,
+                    latestCharm.colorTheme,
+                  ).style
+                "
               ></div>
 
               <span
@@ -366,7 +439,6 @@ function onLogout() {
                   class="w-48 h-64 bg-amber-100/30 rounded-full blur-2xl animate-pulse"
                 ></div>
               </div>
-
               <div
                 class="w-40 h-60 rounded-3xl border-4 border-dashed border-amber-300 bg-amber-50/70 shadow-2xl flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
               >
@@ -387,15 +459,11 @@ function onLogout() {
                     >🔮</span
                   >
                 </div>
-                <div class="relative z-10">
-                  <p
-                    class="text-[11px] text-amber-950 font-black italic tracking-tighter leading-tight"
-                  >
-                    행운의 주문을
-                  </p>
-                  <p
-                    class="text-[9px] text-amber-900/60 font-bold tracking-tight"
-                  >
+                <div
+                  class="relative z-10 text-amber-950 font-black italic tracking-tighter leading-tight"
+                >
+                  <p class="text-[11px]">행운의 주문을</p>
+                  <p class="text-[9px] text-amber-900/60 font-bold">
                     비워두었어요
                   </p>
                 </div>
@@ -423,7 +491,6 @@ function onLogout() {
 </template>
 
 <style scoped>
-/* 추가적인 미세 조정이 필요할 경우 작성 */
 @keyframes pulse {
   0%,
   100% {
