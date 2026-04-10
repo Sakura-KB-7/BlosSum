@@ -7,7 +7,7 @@
       </h1>
     </div>
 
-    <!-- 
+    <!--
     레이아웃 컨테이너
     - isStarted 여부에 따라 레이아웃 변경
     -> false : 영수증 업로드 영역만 가운데 정렬
@@ -17,9 +17,7 @@
       :class="
         cn(
           'grid gap-8 items-start transition-all duration-500',
-          isStarted
-            ? 'grid-cols-1 lg:grid-cols-12'
-            : 'max-w-3xl mx-auto grid-cols-1',
+          isStarted ? 'grid-cols-1 lg:grid-cols-12' : 'max-w-3xl mx-auto grid-cols-1'
         )
       "
     >
@@ -32,8 +30,8 @@
             <h2 class="text-lg font-semibold text-foreground">이미지 업로드</h2>
           </div>
           <div class="p-6">
-            <!-- 
-            업로드 컴포넌트 사용 
+            <!--
+            업로드 컴포넌트 사용
             - 자식 컴포넌트에서 emit한 이벤트 수신
             - props로 상태 전달
             -->
@@ -46,9 +44,9 @@
         </UiCard>
       </div>
 
-      <!-- 
+      <!--
       수정/입력 영역
-      - 스캔 시작 후 생성 
+      - 스캔 시작 후 생성
       - v-if 로 DOM 생성/삭제)
       -->
       <div v-if="isStarted" class="lg:col-span-7 transition-all">
@@ -62,9 +60,7 @@
             <p class="text-lg font-medium text-foreground animate-pulse">
               데이터를 추출하고 있습니다...
             </p>
-            <p class="text-sm text-muted-foreground">
-              잠시만 기다려주시면 입력 폼이 완성됩니다.
-            </p>
+            <p class="text-sm text-muted-foreground">잠시만 기다려주시면 입력 폼이 완성됩니다.</p>
           </div>
         </UiCard>
 
@@ -78,23 +74,19 @@
           >
             <div class="flex items-center gap-2">
               <CheckCircle2Icon class="h-5 w-5 text-primary" />
-              <h2 class="text-lg font-semibold text-foreground">
-                상세 정보 입력
-              </h2>
+              <h2 class="text-lg font-semibold text-foreground">상세 정보 입력</h2>
             </div>
 
             <div
               class="flex items-center gap-2 bg-[#ff8faa]/5 px-3 py-1.5 rounded-full border border-[#ff8faa]/10"
             >
-              <span
-                class="text-[10px] font-bold text-[#ff7a9d] uppercase tracking-wider"
+              <span class="text-[10px] font-bold text-[#ff7a9d] uppercase tracking-wider"
                 >Notice</span
               >
               <p class="text-[11px] text-muted-foreground">
                 실제 내용과 다를 수 있으니
-                <span class="text-[#ff7a9d] font-medium"
-                  >날짜, 금액, 카테고리</span
-                >를 확인해 주세요.
+                <span class="text-[#ff7a9d] font-medium">날짜, 금액, 카테고리</span>를 확인해
+                주세요.
               </p>
             </div>
           </div>
@@ -144,6 +136,10 @@ onMounted(async () => {
 // 파일 업로드 후 실행되는 함수
 const handleAnalyze = async (file) => {
   if (!file) return;
+  if (!GOOGLE_API_KEY) {
+    alert('Google Vision API 키가 없습니다. VITE_GOOGLE_VISION_API_KEY를 설정해 주세요.');
+    return;
+  }
 
   // 스캔 시작 시 상태 변경
   isStarted.value = true;
@@ -164,11 +160,10 @@ const handleAnalyze = async (file) => {
             features: [{ type: 'TEXT_DETECTION' }],
           },
         ],
-      },
+      }
     );
 
-    const fullText =
-      ocrResponse.data.responses[0]?.fullTextAnnotation?.text || '';
+    const fullText = ocrResponse.data.responses[0]?.fullTextAnnotation?.text || '';
 
     if (fullText) {
       // [2] 정규식 기반 파싱 (날짜, 금액)
@@ -176,10 +171,7 @@ const handleAnalyze = async (file) => {
 
       // [3] gpt 추천 카테고리 받아옴
       // - 현재 지출 카테고리 목록 보냄
-      const recommendedId = await getRecommendedCategory(
-        fullText,
-        categories.expense,
-      );
+      const recommendedId = await getRecommendedCategory(fullText, categories.expense);
 
       // [4] 결과 데이터 합치기
       extractedResult.value = {
@@ -201,8 +193,7 @@ const processParsedData = (text) => {
 
   // [날짜 추출]
   // - 다양한 날짜 패턴 찾기
-  const dateRegex =
-    /(?:\b|[^0-9])(\d{2,4})[-./](\d{1,2})[-./](\d{1,2})(?:\b|[^0-9])/;
+  const dateRegex = /(?:\b|[^0-9])(\d{2,4})[-./](\d{1,2})[-./](\d{1,2})(?:\b|[^0-9])/;
   const dateMatch = text.match(dateRegex);
 
   let formattedDate = '';
@@ -231,11 +222,10 @@ const processParsedData = (text) => {
   정규식 패턴
   - wonRegex : '원' 단위 붙은 숫자
   - strongKeywords : 최종 결제 금액 키워드
-  - ignoreKeywords : 제외 키워드 
+  - ignoreKeywords : 제외 키워드
   */
   const wonRegex = /([\d,.]+)\s*원/;
-  const strongKeywords =
-    /(?:합계|결제금액|받을금액|총금액|승인금액|판매\s*합계|카드\/간편결제)/;
+  const strongKeywords = /(?:합계|결제금액|받을금액|총금액|승인금액|판매\s*합계|카드\/간편결제)/;
   const ignoreKeywords = /(?:번호|NO|사업자|전화|TEL|일시|단가)/i;
 
   lines.forEach((line) => {

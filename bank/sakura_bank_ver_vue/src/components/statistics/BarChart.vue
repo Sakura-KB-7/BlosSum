@@ -14,10 +14,12 @@ import {
   Tooltip,
   Legend,
   BarElement,
+  BarController,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  LineController,
 } from 'chart.js';
 
 // Chart.js 구성 요소 등록
@@ -26,10 +28,12 @@ ChartJS.register(
   Tooltip,
   Legend,
   BarElement,
+  BarController,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
+  LineController
 );
 
 // 부모 컴포넌트로부터 전달받는 props
