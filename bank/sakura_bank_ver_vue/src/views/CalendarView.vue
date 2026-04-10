@@ -218,9 +218,9 @@ const calendarCells = computed(() => {
         </UiCard>
       </div>
 
-      <aside class="hidden w-80 shrink-0 lg:block lg:self-stretch">
+      <aside class="hidden w-80 shrink-0 lg:block">
         <UiCard
-          class="border-none bg-card/80 shadow-sm backdrop-blur-sm lg:flex lg:h-full lg:flex-col lg:overflow-hidden"
+          class="sticky top-6 border-none bg-card/80 shadow-sm backdrop-blur-sm lg:flex lg:h-[calc(100vh-11rem)] lg:flex-col lg:overflow-hidden"
         >
           <div v-if="showPanel" class="flex h-full flex-col">
             <div class="flex items-center justify-between border-b border-border p-4">
