@@ -121,10 +121,9 @@ const fetchData = async () => {
     // 현재 달의 카테고리별 지출 데이터 가공
     // 현재 월 지출 데이터 필터링
     const currentMonth = String(new Date().getMonth() + 1).padStart(2, '0');
-    const currentExpenses = records.filter((r) => {
-      if (r.type !== 'expense' || typeof r.date !== 'string') return false;
-      return r.date.split('-')[1] === currentMonth;
-    });
+    const currentExpenses = records.filter(
+      (r) => r.type === 'expense' && r.date.split('-')[1] === currentMonth
+    );
 
     // 카테고리 id -> 객체 매핑
     const catMap = {};

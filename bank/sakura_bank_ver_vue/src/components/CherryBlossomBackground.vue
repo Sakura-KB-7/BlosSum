@@ -19,7 +19,7 @@ onMounted(() => {
   window.addEventListener('resize', resize);
 
   const petals = [];
-  const MAX_PETALS = 120;
+  const MAX_PETALS = 360;
   let lastBurstAt = 0;
 
   const createPetal = (overrides = {}) => ({
@@ -34,7 +34,7 @@ onMounted(() => {
     ...overrides,
   });
 
-  const spawnBurst = (count = 12) => {
+  const spawnBurst = (count = 36) => {
     const available = Math.max(0, MAX_PETALS - petals.length);
     const n = Math.min(count, available);
     for (let i = 0; i < n; i++) {
@@ -98,8 +98,8 @@ onMounted(() => {
   animate();
 
   const onBurstEvent = (event) => {
-    const count = Number(event?.detail?.count ?? 12);
-    spawnBurst(Number.isNaN(count) ? 12 : count);
+    const count = Number(event?.detail?.count ?? 36);
+    spawnBurst(Number.isNaN(count) ? 36 : count);
   };
 
   const onKeyDown = (event) => {
@@ -113,7 +113,7 @@ onMounted(() => {
     const nowTs = performance.now();
     if (nowTs - lastBurstAt < 120) return;
     lastBurstAt = nowTs;
-    spawnBurst(14);
+    spawnBurst(42);
   };
 
   window.addEventListener('sakura:burst', onBurstEvent);

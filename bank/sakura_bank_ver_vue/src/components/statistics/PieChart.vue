@@ -8,10 +8,10 @@
 
 <script setup>
 import { Pie } from 'vue-chartjs';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, PieController, Tooltip, Legend } from 'chart.js';
 
 // Chart.js 구성 요소 등록
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, PieController, Tooltip, Legend);
 
 // 부모 컴포넌트로부터 전달받는 props
 // - chartData: 차트에 표시할 데이터
