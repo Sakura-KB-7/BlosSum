@@ -16,6 +16,13 @@ const pieData = ref(null); // 카테고리별 지출 차트 데이터
 const rawCategories = ref([]); // 카테고리 원본 데이터
 const auth = useAuthStore();
 
+// 원형 차트 중앙에 표시할 총 지출 합계 계산
+const totalExpenseAmount = computed(() => {
+  if (!pieData.value || !pieData.value.datasets[0].data) return 0;
+  // pieData의 datasets 안에 있는 모든 금액을 합산
+  return pieData.value.datasets[0].data.reduce((acc, curr) => acc + curr, 0);
+});
+
 // 원형 차트 우측에 표시할 카테고리 리스트
 // - labels, data, colors를 객체로 묶음
 // - 지출 금액 기준 내림차순 정렬
@@ -44,9 +51,9 @@ const fetchData = async () => {
       http.get('/categories'),
     ]);
 
-    const records = (Array.isArray(recordRes.data) ? recordRes.data : []).filter(
-      (record) => record.userId === auth.currentUserId
-    );
+    const records = (
+      Array.isArray(recordRes.data) ? recordRes.data : []
+    ).filter((record) => record.userId === auth.currentUserId);
     rawCategories.value = categoryRes.data;
 
     // 최근 6개월 추이 데이터 가공
@@ -122,7 +129,7 @@ const fetchData = async () => {
     // 현재 월 지출 데이터 필터링
     const currentMonth = String(new Date().getMonth() + 1).padStart(2, '0');
     const currentExpenses = records.filter(
-      (r) => r.type === 'expense' && r.date.split('-')[1] === currentMonth
+      (r) => r.type === 'expense' && r.date.split('-')[1] === currentMonth,
     );
 
     // 카테고리 id -> 객체 매핑
@@ -252,11 +259,17 @@ onMounted(fetchData);
       <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm">
         <div class="flex items-center gap-2 p-6 pb-2">
           <BarChart3 class="h-5 w-5 text-primary" />
-          <h2 class="text-lg font-semibold text-foreground">월별 수입/지출 추이</h2>
+          <h2 class="text-lg font-semibold text-foreground">
+            월별 수입/지출 추이
+          </h2>
         </div>
         <div class="p-6">
           <div class="h-[300px] w-full">
-            <BarChart v-if="barData" :chart-data="barData" :chart-options="barOptions" />
+            <BarChart
+              v-if="barData"
+              :chart-data="barData"
+              :chart-options="barOptions"
+            />
           </div>
         </div>
       </UiCard>
@@ -269,10 +282,26 @@ onMounted(fetchData);
           </h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-          <div class="h-[300px]">
-            <PieChart v-if="pieData" :chart-data="pieData" :chart-options="pieOptions" />
-          </div>
+          <div class="h-[300px] relative flex items-center justify-center">
+            <PieChart
+              v-if="pieData"
+              :chart-data="pieData"
+              :chart-options="pieOptions"
+            />
 
+            <div
+              v-if="pieData"
+              class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+            >
+              <span
+                class="text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                >Total</span
+              >
+              <span class="text-xl font-bold text-foreground mt-1">
+                {{ totalExpenseAmount.toLocaleString() }}원
+              </span>
+            </div>
+          </div>
           <div class="flex flex-col justify-center space-y-4">
             <div
               v-for="item in categoryList"
@@ -280,10 +309,15 @@ onMounted(fetchData);
               class="flex items-center justify-between border-b border-border/50 pb-2 last:border-0"
             >
               <div class="flex items-center gap-3">
-                <span class="h-3 w-3 rounded-full" :style="{ backgroundColor: item.color }"></span>
+                <span
+                  class="h-3 w-3 rounded-full"
+                  :style="{ backgroundColor: item.color }"
+                ></span>
                 <span class="font-medium text-foreground">{{ item.name }}</span>
               </div>
-              <span class="font-bold text-foreground">{{ item.amount.toLocaleString() }}원</span>
+              <span class="font-bold text-foreground"
+                >{{ item.amount.toLocaleString() }}원</span
+              >
             </div>
           </div>
         </div>
