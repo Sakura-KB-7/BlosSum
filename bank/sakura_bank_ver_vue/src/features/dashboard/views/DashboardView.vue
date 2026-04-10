@@ -21,7 +21,7 @@ import ReceiptWidget from '../components/ReceiptWidget.vue';
 
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
-  
+
 import { useAuthStore } from '@/stores/auth';
 import { cn } from '@/shared/lib/utils';
 
@@ -243,12 +243,6 @@ onMounted(async () => {
         </h1>
         <p class="text-muted-foreground text-sm">{{ dateLabel }}</p>
       </div>
-      <UiButton
-        variant="outline"
-        class="rounded-full shadow-sm"
-        @click="onLogout"
-        >로그아웃</UiButton
-      >
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">

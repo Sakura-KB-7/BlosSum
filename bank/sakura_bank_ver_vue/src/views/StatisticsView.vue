@@ -252,7 +252,7 @@ onMounted(fetchData);
 <template>
   <div class="space-y-6">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-foreground">소비 통계 리포트 📊</h1>
+      <h1 class="text-2xl font-bold text-foreground">소비 통계 리포트 📈</h1>
     </div>
 
     <div class="flex flex-col gap-6">

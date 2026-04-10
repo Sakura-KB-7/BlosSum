@@ -95,7 +95,7 @@ const categoryOptions = computed(() => {
 <template>
   <div class="space-y-6">
     <div>
-      <h1 class="text-2xl font-bold text-foreground">거래 내역</h1>
+      <h1 class="text-2xl font-bold text-foreground">거래 내역 💸</h1>
       <p class="text-muted-foreground">
         소중한 기록들을 한눈에 확인하고 관리해 보세요
       </p>
