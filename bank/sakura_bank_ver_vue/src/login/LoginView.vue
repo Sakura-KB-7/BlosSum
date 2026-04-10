@@ -53,7 +53,8 @@ async function onSubmit() {
     auth.login(user.userId);
     router.push({ name: 'dashboard' });
   } catch (error) {
-    errorMessage.value = '로그인하지 못했습니다. json-server 상태를 확인하세요.';
+    errorMessage.value =
+      '로그인하지 못했습니다. json-server 상태를 확인하세요.';
   } finally {
     loading.value = false;
   }
@@ -67,27 +68,39 @@ async function onSubmit() {
     <CherryBlossomBackground />
 
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
-      <div class="absolute right-0 top-0 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl" />
-      <div class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-200/30 blur-3xl" />
+      <div
+        class="absolute -left-16 top-20 h-72 w-72 rounded-full bg-primary/18 blur-3xl"
+      />
+      <div
+        class="absolute right-0 top-0 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl"
+      />
+      <div
+        class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-200/30 blur-3xl"
+      />
     </div>
 
-    <div class="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-10">
+    <div
+      class="relative z-10 mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-10"
+    >
       <UiCard
         class="w-full max-w-xl border-white/70 bg-white/82 p-7 shadow-[0_24px_70px_rgba(165,110,125,0.14)] backdrop-blur-xl sm:p-8"
       >
         <div class="mx-auto flex max-w-md flex-col gap-6">
           <div class="space-y-3 text-center">
             <div class="inline-flex items-center justify-center">
-              <div class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/80 to-amber-300/80 text-2xl shadow-lg">
+              <div
+                class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/80 to-amber-300/80 text-2xl shadow-lg"
+              >
                 🌸
               </div>
             </div>
             <div>
-              <h2 class="text-2xl font-semibold text-foreground">로그인</h2>
-              <p class="mt-2 text-sm leading-6 text-muted-foreground">
-                아이디와 비밀번호를 입력해 봄지갑으로 들어갑니다.
-              </p>
+              <h3
+                class="text-lg font-semibold leading-relaxed tracking-tight bg-gradient-to-r from-pink-400 via-rose-400 to-amber-300 bg-clip-text text-transparent"
+              >
+                소비가 흩어지지 않도록,<br />
+                자산이 만개하는 봄을 기록하세요
+              </h3>
             </div>
           </div>
 
@@ -144,10 +157,6 @@ async function onSubmit() {
               <ArrowRight class="h-4 w-4" />
             </UiButton>
           </form>
-
-          <div class="rounded-[1.5rem] bg-secondary/70 px-4 py-3 text-sm text-muted-foreground">
-            로그인 후 대시보드, 거래 내역, 캘린더 가계부 화면으로 이어집니다.
-          </div>
 
           <button
             type="button"
