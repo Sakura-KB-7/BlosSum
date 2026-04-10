@@ -7,9 +7,11 @@ import {
 } from '@/map/lib/place-api';
 import { normalizeDraftAddress, sortFavoritePlaces } from '@/map/lib/place-utils';
 import { reverseGeocode } from '@/map/lib/naver-map-service';
+import { useLoadingStore } from '@/stores/loading';
 
 // 저장 장소 목록, 임시 핀, 수정 상태를 한곳에서 관리한다.
 export function useMapPlaces({ auth, mapScene }) {
+  const loadingStore = useLoadingStore();
   const favoritePlaces = ref([]);
   const selectedPlaceId = ref(null);
   const draftPlace = ref(null);
@@ -90,6 +92,11 @@ export function useMapPlaces({ auth, mapScene }) {
   // 실제 저장 요청을 보내고 성공 시 목록과 마커를 갱신한다.
   async function savePlace(place) {
     savingPlaceId.value = place.id || 'draft';
+    loadingStore.showOverlay({
+      context: 'map-save',
+      title: '장소를 저장하고 있어요',
+      description: '소비지도에 핀 정보를 기록하는 중입니다.',
+    });
 
     try {
       const existingPlaces = await fetchFavoritePlaces(auth.currentUserId);
@@ -98,8 +105,7 @@ export function useMapPlaces({ auth, mapScene }) {
       if (
         Array.isArray(existingPlaces) &&
         existingPlaces.some(
-          (item) =>
-            Number(item.lat) === Number(place.lat) && Number(item.lng) === Number(place.lng)
+          (item) => Number(item.lat) === Number(place.lat) && Number(item.lng) === Number(place.lng)
         )
       ) {
         return;
@@ -113,6 +119,7 @@ export function useMapPlaces({ auth, mapScene }) {
       mapScene.clearDraftMarker();
     } finally {
       savingPlaceId.value = null;
+      loadingStore.hideOverlay();
     }
   }
 
