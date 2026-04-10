@@ -11,7 +11,7 @@ export async function fetchFavoritePlaces(userId) {
 
 // 검색 프록시 서버를 통해 네이버 지역 검색 결과를 가져온다.
 export async function searchLocalPlaces(query) {
-  const response = await fetch(`/search/local?query=${encodeURIComponent(query)}`);
+  const response = await fetch(`/api/search/local?query=${encodeURIComponent(query)}`);
   const data = await response.json();
 
   if (!response.ok) {
