@@ -12,14 +12,15 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
+      '/api/search': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/api\/search/, '/search'),
+      },
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (p) => p.replace(/^\/api/, ''),
-      },
-      '/search': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
       },
     },
   },
