@@ -45,10 +45,11 @@
 
           <button
             @click="handleAnalyze"
-            :disabled="isAnalyzing"
+            :disabled="props.isAnalyzing"
             class="flex-1 px-4 py-2 bg-[#ff8faa] text-white rounded-full text-sm font-medium hover:bg-[#ff7a9d] disabled:opacity-50 transition-colors shadow-sm"
           >
-            {{ isAnalyzing ? '분석 중...' : '영수증 스캔 시작' }}
+            <!-- 부모 (ReceiptView) 의 isAnalyzing 변수와 연결 -->
+            {{ props.isAnalyzing ? '스캔 중...' : '스캔 시작' }}
           </button>
         </div>
       </template>
@@ -75,7 +76,6 @@ const props = defineProps(['isAnalyzing']);
 const fileInput = ref(null);
 const imageFile = ref(null);
 const previewUrl = ref(null);
-const isAnalyzing = ref(false);
 
 // 파일 선택 시 실행
 const onFileChange = (e) => {
@@ -99,13 +99,13 @@ const resetImage = () => {
 
 // 분석 버튼 클릭 -> 상위 컴포넌트로 파일 전달
 const handleAnalyze = () => {
-  isAnalyzing.value = true;
+  emit('update:isAnalyzing', true);
   emit('analyze', imageFile.value);
 };
 
 // 다시 선택 버튼을 눌렀을 때 실행될 함수
 const handleResetAndPick = () => {
-  isAnalyzing.value = false; // 분석 종료
+  emit('update:isAnalyzing', false); // 분석 종료
 
   // 파일 비우기
   if (fileInput.value) {
