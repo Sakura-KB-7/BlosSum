@@ -306,12 +306,6 @@ onMounted(async () => {
           <p class="mt-1 text-xs text-primary/80">
             실시간 검색 기반으로 최신 혜택/지원 정보를 반영합니다.
           </p>
-          <p class="mt-1 text-xs text-muted-foreground">
-            이번 달 지출: <span class="font-semibold">{{ formatWon(currentMonthExpense) }}</span>
-            <span v-if="profileStore.profile?.monthlyBudget">
-              / 예산 {{ formatWon(profileStore.profile.monthlyBudget) }}
-            </span>
-          </p>
         </div>
         <UiButton :disabled="isGenerating || budgetStore.loading" @click="onGenerate">
           {{ isGenerating ? '생성 중...' : 'AI 소식지 생성' }}
