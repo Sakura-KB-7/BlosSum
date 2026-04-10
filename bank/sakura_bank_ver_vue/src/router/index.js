@@ -109,10 +109,6 @@ const router = createRouter({
  * 네비게이션 가드
  */
 router.beforeEach((to) => {
-  // 1. 모든 검사를 무시하고 통과시키려면 아래 한 줄만 남기고 나머지는 주석 처리하세요.
-  return true;
-
-  /* 기존 로직 주석 처리
   const auth = useAuthStore();
 
   const isPublicPage =
@@ -120,16 +116,17 @@ router.beforeEach((to) => {
 
   const isAuthPage = to.name === 'login' || to.name === 'signup';
 
+  // 비로그인 사용자가 공개되지 않은 페이지에 접근 시 로그인으로 강제 이동
   if (!auth.isAuthenticated && !isPublicPage) {
     return { name: 'login' };
   }
 
+  // 로그인 상태에서 로그인/회원가입 접근 시 대시보드로 이동
   if (auth.isAuthenticated && isAuthPage) {
     return { name: 'dashboard' };
   }
 
   return true;
-  */
 });
 
 export default router;
