@@ -147,8 +147,8 @@ export function useMapPlaces({ auth, mapScene }) {
       if (selectedPlaceId.value === place.id) {
         selectedPlaceId.value = null;
       }
-      await refreshFavoritePlaces();
-      // 삭제는 마커 배열이 틀어질 수 있어 저장 마커를 전체 기준으로 다시 맞춘다.
+      favoritePlaces.value = favoritePlaces.value.filter((item) => item.id !== place.id);
+      // 삭제는 마커 배열이 틀어질 수 있어 현재 로컬 목록 기준으로 저장 마커를 다시 맞춘다.
       mapScene.renderSavedMarkers(sortedFavoritePlaces.value);
     } finally {
       deletingPlaceId.value = null;

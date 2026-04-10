@@ -2,6 +2,37 @@
 import MapSummaryCardsSkeleton from '@/map/components/MapSummaryCardsSkeleton.vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 
+const categoryToneMap = {
+  '맛집': {
+    itemClass: 'bg-white/90 text-foreground',
+    badgeClass: 'bg-rose-100/80 text-rose-700',
+  },
+  '카페': {
+    itemClass: 'bg-white/90 text-foreground',
+    badgeClass: 'bg-orange-100/80 text-orange-700',
+  },
+  '산책': {
+    itemClass: 'bg-white/90 text-foreground',
+    badgeClass: 'bg-emerald-100/80 text-emerald-700',
+  },
+  '쇼핑': {
+    itemClass: 'bg-white/90 text-foreground',
+    badgeClass: 'bg-sky-100/80 text-sky-700',
+  },
+  '데이트': {
+    itemClass: 'bg-white/90 text-foreground',
+    badgeClass: 'bg-pink-100/80 text-pink-700',
+  },
+  '기타': {
+    itemClass: 'bg-white/90 text-foreground',
+    badgeClass: 'bg-slate-200/80 text-slate-700',
+  },
+};
+
+function getCategoryTone(category) {
+  return categoryToneMap[category] || categoryToneMap['기타'];
+}
+
 defineProps({
   loading: {
     type: Boolean,
@@ -35,16 +66,22 @@ const emit = defineEmits(['focus-place']);
           <p class="text-2xl font-bold tracking-tight text-foreground">{{ totalPlaces }}곳</p>
           <p class="text-xs text-muted-foreground">카테고리별 저장 현황</p>
         </div>
-        <div v-if="categoryCounts.length" class="mt-4 grid flex-1 auto-rows-fr gap-2 sm:grid-cols-2">
-          <div
-            v-for="item in categoryCounts"
-            :key="item.category"
-            class="flex items-center justify-between rounded-2xl bg-secondary/70 px-3 py-2.5"
-          >
-            <span class="text-sm font-medium text-foreground">{{ item.category }}</span>
-            <span class="rounded-full bg-background px-2.5 py-1 text-xs font-semibold text-foreground">
-              {{ item.count }}
-            </span>
+        <div v-if="categoryCounts.length" class="mt-4 h-[116px] rounded-2xl bg-secondary/50 p-2">
+          <div class="grid h-full grid-cols-2 auto-rows-[2rem] content-start gap-1.5 overflow-y-auto pr-1">
+            <div
+              v-for="item in categoryCounts"
+              :key="item.category"
+              class="flex h-8 min-w-0 items-center justify-between rounded-xl px-3"
+              :class="getCategoryTone(item.category).itemClass"
+            >
+              <span class="truncate text-xs font-medium">{{ item.category }}</span>
+              <span
+                class="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                :class="getCategoryTone(item.category).badgeClass"
+              >
+                {{ item.count }}
+              </span>
+            </div>
           </div>
         </div>
         <div
