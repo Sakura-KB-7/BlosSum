@@ -13,6 +13,7 @@ import {
 } from 'lucide-vue-next';
 
 import UiCard from '@/shared/ui/UiCard.vue';
+import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import StatCard from '../components/StatCard.vue';
 import CategoryPie from '../components/CategoryPie.vue';
 import NewsletterWidget from '../components/NewsletterWidget.vue';
@@ -41,52 +42,40 @@ const previousMonthDate = new Date(currentYear, today.getMonth() - 1, 1);
 const previousYear = previousMonthDate.getFullYear();
 const previousMonth = previousMonthDate.getMonth() + 1;
 
-const dateLabel = computed(() =>
-  new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  }).format(today),
-);
-
-const formatAmount = (val) =>
-  new Intl.NumberFormat('ko-KR').format(Number(val || 0)) + '원';
+const formatAmount = (val) => new Intl.NumberFormat('ko-KR').format(Number(val || 0)) + '원';
 
 // 내역 필터링
 const currentMonthRows = computed(() =>
   budget.items.filter((row) => {
     const d = new Date(row.date);
     return d.getFullYear() === currentYear && d.getMonth() + 1 === currentMonth;
-  }),
+  })
 );
 
 const previousMonthRows = computed(() =>
   budget.items.filter((row) => {
     const d = new Date(row.date);
-    return (
-      d.getFullYear() === previousYear && d.getMonth() + 1 === previousMonth
-    );
-  }),
+    return d.getFullYear() === previousYear && d.getMonth() + 1 === previousMonth;
+  })
 );
 
 // 합계 계산
 const currentIncomeTotal = computed(() =>
   currentMonthRows.value
     .filter((r) => r.type === 'income')
-    .reduce((s, r) => s + Number(r.amount || 0), 0),
+    .reduce((s, r) => s + Number(r.amount || 0), 0)
 );
 
 const currentExpenseTotal = computed(() =>
   currentMonthRows.value
     .filter((r) => r.type === 'expense')
-    .reduce((s, r) => s + Number(r.amount || 0), 0),
+    .reduce((s, r) => s + Number(r.amount || 0), 0)
 );
 
 const previousExpenseTotal = computed(() =>
   previousMonthRows.value
     .filter((r) => r.type === 'expense')
-    .reduce((s, r) => s + Number(r.amount || 0), 0),
+    .reduce((s, r) => s + Number(r.amount || 0), 0)
 );
 
 const percentChange = computed(() => {
@@ -102,15 +91,12 @@ const budgetUsageRate = computed(() => {
 });
 
 const remainingBalance = computed(() =>
-  Math.max(currentIncomeTotal.value - currentExpenseTotal.value, 0),
+  Math.max(currentIncomeTotal.value - currentExpenseTotal.value, 0)
 );
 
 // 차트 데이터
 const categoryMap = computed(() =>
-  [...categories.income, ...categories.expense].reduce(
-    (acc, c) => ({ ...acc, [c.id]: c }),
-    {},
-  ),
+  [...categories.income, ...categories.expense].reduce((acc, c) => ({ ...acc, [c.id]: c }), {})
 );
 
 const pieData = computed(() => {
@@ -187,8 +173,7 @@ const frames = [
   },
   {
     id: 'neon',
-    class:
-      'border-[3px] border-pink-400 shadow-[0_0_15px_rgba(244,114,182,0.6)]',
+    class: 'border-[3px] border-pink-400 shadow-[0_0_15px_rgba(244,114,182,0.6)]',
   },
   {
     id: 'ornate',
@@ -204,8 +189,7 @@ const frames = [
   },
   {
     id: 'sparkle',
-    class:
-      'border-[5px] border-dotted border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]',
+    class: 'border-[5px] border-dotted border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.5)]',
   },
 ];
 
@@ -216,9 +200,7 @@ const getAdjustedFrame = (frameId, themeId) => {
   let style = frame.style || '';
   const isDark = ['midnight', 'forest', 'ocean', 'berry'].includes(themeId);
   if (isDark) {
-    className = className
-      .replace(/black/g, 'white')
-      .replace(/opacity-0.2/g, 'opacity-0.5');
+    className = className.replace(/black/g, 'white').replace(/opacity-0.2/g, 'opacity-0.5');
     style = style.replace(/%23000/g, '%23FFF');
   }
   return { className, style };
@@ -236,14 +218,10 @@ onMounted(async () => {
 
 <template>
   <div class="space-y-6 max-w-full mx-auto pb-10">
-    <div class="flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-bold text-foreground tracking-tight">
-          환영합니다, 오늘도 좋은 하루예요 🌸
-        </h1>
-        <p class="text-muted-foreground text-sm">{{ dateLabel }}</p>
-      </div>
-    </div>
+    <PageIntroHeader
+      title="내 지갑 대시보드 🌸"
+      description="이번 달 수입·지출·소비율과 핵심 위젯을 한눈에 확인해보세요."
+    />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
       <StatCard
@@ -257,9 +235,7 @@ onMounted(async () => {
           <div class="flex items-center gap-1 text-[11px] font-medium">
             <template v-if="Number(percentChange) < 0">
               <ArrowDownRight class="h-3.5 w-3.5 text-green-600" />
-              <span class="text-green-600"
-                >{{ Math.abs(percentChange) }}% 감소</span
-              >
+              <span class="text-green-600">{{ Math.abs(percentChange) }}% 감소</span>
             </template>
             <template v-else>
               <ArrowUpRight class="h-3.5 w-3.5 text-pink-600" />
@@ -294,13 +270,10 @@ onMounted(async () => {
       >
         <template #extra>
           <div class="text-right leading-none self-end pb-0.5">
-            <span class="text-[9px] text-muted-foreground block mb-0.5"
-              >남은 여유 자금</span
-            >
-            <span
-              class="text-[13px] font-bold text-amber-600 whitespace-nowrap"
-              >{{ formatAmount(remainingBalance) }}</span
-            >
+            <span class="text-[9px] text-muted-foreground block mb-0.5">남은 여유 자금</span>
+            <span class="text-[13px] font-bold text-amber-600 whitespace-nowrap">{{
+              formatAmount(remainingBalance)
+            }}</span>
           </div>
         </template>
         <template #footer>
@@ -328,9 +301,7 @@ onMounted(async () => {
               <div class="inline-flex p-3 bg-violet-100 rounded-2xl shrink-0">
                 <PieChartIcon class="h-6 w-6 text-violet-600" />
               </div>
-              <h2 class="text-lg font-bold text-foreground tracking-tight">
-                카테고리별 지출 현황
-              </h2>
+              <h2 class="text-lg font-bold text-foreground tracking-tight">카테고리별 지출 현황</h2>
             </div>
             <div
               class="text-xs text-muted-foreground flex items-center gap-1 opacity-80 hover:opacity-100 transition-opacity"
@@ -363,9 +334,7 @@ onMounted(async () => {
               >
                 <Sparkles class="h-6 w-6 text-amber-600" />
               </div>
-              <h2 class="text-lg font-bold text-foreground tracking-tight">
-                부적 꾸미기
-              </h2>
+              <h2 class="text-lg font-bold text-foreground tracking-tight">부적 꾸미기</h2>
             </div>
             <div
               class="text-xs text-muted-foreground flex items-center gap-1 opacity-80 group-hover:opacity-100 group-hover:text-primary transition-all"
@@ -374,15 +343,13 @@ onMounted(async () => {
             </div>
           </div>
 
-          <div
-            class="px-6 pb-4 flex-1 flex items-center justify-center relative z-10"
-          >
+          <div class="px-6 pb-4 flex-1 flex items-center justify-center relative z-10">
             <div
               v-if="latestCharm"
               :class="
                 cn(
                   'w-40 h-60 rounded-3xl shadow-2xl flex flex-col items-center justify-center p-6 text-center border-4 border-white relative transition-all duration-500 group-hover:scale-105 group-hover:rotate-1 z-20',
-                  getThemeClass(latestCharm.colorTheme),
+                  getThemeClass(latestCharm.colorTheme)
                 )
               "
             >
@@ -390,18 +357,10 @@ onMounted(async () => {
                 :class="
                   cn(
                     'absolute inset-3 rounded-[24px] pointer-events-none',
-                    getAdjustedFrame(
-                      latestCharm.frameStyle,
-                      latestCharm.colorTheme,
-                    ).className,
+                    getAdjustedFrame(latestCharm.frameStyle, latestCharm.colorTheme).className
                   )
                 "
-                :style="
-                  getAdjustedFrame(
-                    latestCharm.frameStyle,
-                    latestCharm.colorTheme,
-                  ).style
-                "
+                :style="getAdjustedFrame(latestCharm.frameStyle, latestCharm.colorTheme).style"
               ></div>
 
               <span
@@ -420,12 +379,8 @@ onMounted(async () => {
               v-else
               class="text-center flex flex-col items-center relative group-hover:scale-105 transition-transform duration-500 z-20"
             >
-              <div
-                class="absolute inset-0 flex items-center justify-center pointer-events-none"
-              >
-                <div
-                  class="w-48 h-64 bg-amber-100/30 rounded-full blur-2xl animate-pulse"
-                ></div>
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="w-48 h-64 bg-amber-100/30 rounded-full blur-2xl animate-pulse"></div>
               </div>
               <div
                 class="w-40 h-60 rounded-3xl border-4 border-dashed border-amber-300 bg-amber-50/70 shadow-2xl flex flex-col items-center justify-center p-6 text-center relative overflow-hidden"
@@ -442,8 +397,7 @@ onMounted(async () => {
                   <Sparkles
                     class="absolute -inset-6 h-20 w-20 text-amber-300 opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all duration-1000"
                   />
-                  <span
-                    class="text-6xl relative z-20 drop-shadow-xl group-hover:animate-pulse"
+                  <span class="text-6xl relative z-20 drop-shadow-xl group-hover:animate-pulse"
                     >🔮</span
                   >
                 </div>
@@ -451,9 +405,7 @@ onMounted(async () => {
                   class="relative z-10 text-amber-950 font-black italic tracking-tighter leading-tight"
                 >
                   <p class="text-[11px]">행운의 주문을</p>
-                  <p class="text-[9px] text-amber-900/60 font-bold">
-                    비워두었어요
-                  </p>
+                  <p class="text-[9px] text-amber-900/60 font-bold">비워두었어요</p>
                 </div>
               </div>
             </div>

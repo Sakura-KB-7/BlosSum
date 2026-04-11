@@ -73,11 +73,7 @@ function onLogout() {
 }
 
 onMounted(async () => {
-  await Promise.all([
-    budget.fetchAll(),
-    categories.fetchAll(),
-    profile.fetchAll(),
-  ]);
+  await Promise.all([budget.fetchAll(), categories.fetchAll(), profile.fetchAll()]);
 });
 </script>
 
@@ -86,13 +82,11 @@ onMounted(async () => {
     :class="
       cn(
         'sticky top-0 z-20 flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar',
-        collapsed ? 'w-16' : 'w-64',
+        collapsed ? 'w-16' : 'w-64'
       )
     "
   >
-    <div
-      class="flex h-16 items-center gap-2 border-b border-sidebar-border px-4"
-    >
+    <div class="flex h-16 items-center gap-2 border-b border-sidebar-border px-4">
       <div
         class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-lg"
       >
@@ -105,16 +99,13 @@ onMounted(async () => {
 
     <div v-if="!collapsed" class="border-b border-sidebar-border p-4">
       <div class="flex items-center gap-3">
-        <div
-          class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-lg"
-        >
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-lg">
           🧑‍💻
         </div>
         <div>
           <p class="text-sm font-medium text-sidebar-foreground">
             {{ displayName }}
           </p>
-          <p class="text-xs text-muted-foreground">절약 레벨 Lv.3</p>
         </div>
       </div>
     </div>
@@ -129,15 +120,13 @@ onMounted(async () => {
             'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
             isMainActive(item.to)
               ? 'bg-sidebar-accent text-sidebar-primary'
-              : 'text-sidebar-foreground hover:bg-sidebar-accent/50',
+              : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
           )
         "
       >
         <component
           :is="item.icon"
-          :class="
-            cn('h-5 w-5 shrink-0', isMainActive(item.to) && 'text-primary')
-          "
+          :class="cn('h-5 w-5 shrink-0', isMainActive(item.to) && 'text-primary')"
         />
         <span v-if="!collapsed">{{ item.label }}</span>
       </RouterLink>
@@ -150,7 +139,7 @@ onMounted(async () => {
             'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
             isExtraActive(item)
               ? 'bg-sidebar-accent text-sidebar-primary'
-              : 'text-sidebar-foreground hover:bg-sidebar-accent/50',
+              : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
           )
         "
       >
@@ -163,7 +152,7 @@ onMounted(async () => {
         :class="
           cn(
             'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
-            'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-primary',
+            'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-primary'
           )
         "
         @click="openLogoutModal"
@@ -182,10 +171,6 @@ onMounted(async () => {
       <ChevronLeft v-else class="h-3 w-3" />
     </button>
 
-    <SidebarLogoutModal
-      :open="showLogoutModal"
-      @close="closeLogoutModal"
-      @confirm="onLogout"
-    />
+    <SidebarLogoutModal :open="showLogoutModal" @close="closeLogoutModal" @confirm="onLogout" />
   </aside>
 </template>

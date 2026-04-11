@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
+import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useProfileStore } from '@/stores/profile';
 import pkg from '../../package.json';
 
@@ -23,10 +24,7 @@ function applyTheme(mode) {
   const root = document.documentElement;
   root.classList.remove('dark');
   if (mode === 'dark') root.classList.add('dark');
-  else if (
-    mode === 'system' &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  ) {
+  else if (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     root.classList.add('dark');
   }
 }
@@ -70,7 +68,7 @@ watch(
     monthlyBudget.value = Number(p?.monthlyBudget ?? 0);
     currency.value = p?.currency ?? 'KRW';
   },
-  { immediate: true },
+  { immediate: true }
 );
 
 async function onSave() {
@@ -105,12 +103,10 @@ function clearNewsletterCache() {
 
 <template>
   <div class="space-y-6">
-    <div>
-      <h1 class="text-2xl font-bold text-foreground">설정 · 프로필 ⚙️</h1>
-      <p class="text-muted-foreground">
-        이름·연락처·예산과, 이 기기에서만 쓰는 화면·캐시 설정을 바꿀 수 있어요.
-      </p>
-    </div>
+    <PageIntroHeader
+      title="설정 · 프로필 ⚙️"
+      description="이름·연락처·예산과, 이 기기에서만 쓰는 화면·캐시 설정을 바꿀 수 있어요."
+    />
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
       <form class="flex flex-col gap-4 p-6" @submit.prevent="onSave">
@@ -144,9 +140,7 @@ function clearNewsletterCache() {
             step="10000"
             class="rounded-lg border border-input bg-background px-3 py-2"
           />
-          <span class="text-xs text-muted-foreground"
-            >대시보드·목표 진행에 반영됩니다.</span
-          >
+          <span class="text-xs text-muted-foreground">대시보드·목표 진행에 반영됩니다.</span>
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-xs font-semibold" for="c">통화</label>
@@ -159,11 +153,7 @@ function clearNewsletterCache() {
             <option value="USD">달러 (USD)</option>
           </select>
         </div>
-        <UiButton
-          type="submit"
-          class="w-fit"
-          :disabled="saving || profile.loading"
-        >
+        <UiButton type="submit" class="w-fit" :disabled="saving || profile.loading">
           {{ saving ? '저장 중…' : '저장' }}
         </UiButton>
       </form>
@@ -171,9 +161,7 @@ function clearNewsletterCache() {
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
       <div class="border-b border-border/50 px-6 py-3">
-        <p class="text-xs font-semibold text-foreground">
-          화면 (이 브라우저만)
-        </p>
+        <p class="text-xs font-semibold text-foreground">화면 (이 브라우저만)</p>
       </div>
       <div class="flex flex-wrap gap-2 p-6 pt-4">
         <UiButton
@@ -209,15 +197,9 @@ function clearNewsletterCache() {
       </div>
       <div class="space-y-3 p-6 pt-4">
         <p class="text-sm text-muted-foreground">
-          생성해 둔 소식지 카드는 새로고침 후에도 보이도록 이 기기에만
-          저장됩니다.
+          생성해 둔 소식지 카드는 새로고침 후에도 보이도록 이 기기에만 저장됩니다.
         </p>
-        <UiButton
-          type="button"
-          variant="outline"
-          class="w-fit"
-          @click="clearNewsletterCache"
-        >
+        <UiButton type="button" variant="outline" class="w-fit" @click="clearNewsletterCache">
           저장된 소식지 지우기
         </UiButton>
       </div>

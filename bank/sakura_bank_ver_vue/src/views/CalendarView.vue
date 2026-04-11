@@ -1,11 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight, Plus, X, Pencil, Trash2 } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
+import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
+import { useLoadingStore } from '@/stores/loading';
 import { cn } from '@/shared/lib/utils';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -26,6 +28,7 @@ const MONTHS = [
 const budget = useBudgetStore();
 const categoryStore = useCategoryStore();
 const router = useRouter();
+const loadingStore = useLoadingStore();
 onMounted(async () => {
   await Promise.all([budget.fetchAll(), categoryStore.fetchAll()]);
 });
@@ -83,6 +86,34 @@ function onAddTransaction() {
   router.push({ name: 'transaction-new', query: { date: selectedDate.value } });
 }
 
+async function onEditTransaction(id) {
+  loadingStore.showOverlay({
+    context: 'calendar-edit',
+    title: '거래 수정 화면으로 이동 중이에요',
+    description: '선택한 거래를 불러오는 중입니다.',
+  });
+  try {
+    await router.push({ name: 'transaction-edit', params: { id: String(id) } });
+  } finally {
+    loadingStore.hideOverlay();
+  }
+}
+
+async function onDeleteTransaction(id) {
+  if (!window.confirm('이 거래를 삭제할까요?')) return;
+
+  loadingStore.showOverlay({
+    context: 'calendar-delete',
+    title: '거래를 삭제하고 있어요',
+    description: '일별 내역과 통계를 함께 갱신하는 중입니다.',
+  });
+  try {
+    await budget.removeRow(String(id));
+  } finally {
+    loadingStore.hideOverlay();
+  }
+}
+
 const selectedExpenses = computed(() =>
   selectedDate.value ? expensesByDay.value[selectedDate.value] || [] : []
 );
@@ -96,6 +127,12 @@ const selectedNetAmount = computed(() =>
 
 function formatAmount(value) {
   return new Intl.NumberFormat('ko-KR').format(Number(value || 0)) + '원';
+}
+
+function formatMetaText(expense) {
+  const payment = expense.paymentMethod || '결제수단 미기입';
+  const memo = expense.memo || '메모 없음';
+  return `${payment} · ${memo}`;
 }
 
 function selectedDateLabel(dateIso) {
@@ -127,8 +164,12 @@ const calendarCells = computed(() => {
 
 <template>
   <div class="space-y-4">
-    <div class="relative z-[60] flex flex-wrap items-center justify-between gap-2">
-      <h1 class="text-2xl font-bold text-foreground">캘린더 가계부 📅</h1>
+    <div class="relative z-[60] flex flex-wrap items-start justify-between gap-3">
+      <PageIntroHeader
+        title="캘린더 가계부 📅"
+        description="날짜를 눌러 일별 거래를 확인하고, 바로 수정/삭제까지 이어서 관리해보세요."
+        class="min-w-[260px] flex-1"
+      />
       <UiButton
         class="relative z-[60] shrink-0 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
         @click="onAddTransaction"
@@ -249,13 +290,28 @@ const calendarCells = computed(() => {
                         {{ expense.title }}
                       </p>
                       <p class="text-xs text-muted-foreground">
-                        {{ expense.paymentMethod }} · {{ expense.memo }}
+                        {{ formatMetaText(expense) }}
                       </p>
                     </div>
                     <p :class="expense.type === 'income' ? 'text-blue-600' : 'text-pink-600'">
                       {{ expense.type === 'income' ? '+' : '-'
                       }}{{ expense.amount.toLocaleString() }}원
                     </p>
+                  </div>
+                  <div class="mt-3 flex justify-end gap-2">
+                    <UiButton variant="outline" size="sm" @click="onEditTransaction(expense.id)">
+                      <Pencil class="mr-1 h-3.5 w-3.5" />
+                      수정
+                    </UiButton>
+                    <UiButton
+                      variant="ghost"
+                      size="sm"
+                      class="text-destructive hover:text-destructive"
+                      @click="onDeleteTransaction(expense.id)"
+                    >
+                      <Trash2 class="mr-1 h-3.5 w-3.5" />
+                      삭제
+                    </UiButton>
                   </div>
                 </div>
                 <div class="mt-4 rounded-xl bg-primary/10 p-3 text-center">
@@ -313,12 +369,27 @@ const calendarCells = computed(() => {
                 <div class="flex-1">
                   <p class="font-medium text-foreground">{{ expense.title }}</p>
                   <p class="text-xs text-muted-foreground">
-                    {{ expense.paymentMethod }} · {{ expense.memo }}
+                    {{ formatMetaText(expense) }}
                   </p>
                 </div>
                 <p :class="expense.type === 'income' ? 'text-blue-600' : 'text-pink-600'">
                   {{ expense.type === 'income' ? '+' : '-' }}{{ expense.amount.toLocaleString() }}원
                 </p>
+              </div>
+              <div class="mt-3 flex justify-end gap-2">
+                <UiButton variant="outline" size="sm" @click="onEditTransaction(expense.id)">
+                  <Pencil class="mr-1 h-3.5 w-3.5" />
+                  수정
+                </UiButton>
+                <UiButton
+                  variant="ghost"
+                  size="sm"
+                  class="text-destructive hover:text-destructive"
+                  @click="onDeleteTransaction(expense.id)"
+                >
+                  <Trash2 class="mr-1 h-3.5 w-3.5" />
+                  삭제
+                </UiButton>
               </div>
             </div>
             <div class="mt-4 rounded-xl bg-primary/10 p-3 text-center">
