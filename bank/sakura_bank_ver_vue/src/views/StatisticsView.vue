@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { BarChart3, PieChart as PieIcon } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
+import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/stores/auth';
 import { http } from '@/api/http';
@@ -51,9 +52,9 @@ const fetchData = async () => {
       http.get('/categories'),
     ]);
 
-    const records = (
-      Array.isArray(recordRes.data) ? recordRes.data : []
-    ).filter((record) => record.userId === auth.currentUserId);
+    const records = (Array.isArray(recordRes.data) ? recordRes.data : []).filter(
+      (record) => record.userId === auth.currentUserId
+    );
     rawCategories.value = categoryRes.data;
 
     // 최근 6개월 추이 데이터 가공
@@ -129,7 +130,7 @@ const fetchData = async () => {
     // 현재 월 지출 데이터 필터링
     const currentMonth = String(new Date().getMonth() + 1).padStart(2, '0');
     const currentExpenses = records.filter(
-      (r) => r.type === 'expense' && r.date.split('-')[1] === currentMonth,
+      (r) => r.type === 'expense' && r.date.split('-')[1] === currentMonth
     );
 
     // 카테고리 id -> 객체 매핑
@@ -251,25 +252,20 @@ onMounted(fetchData);
 
 <template>
   <div class="space-y-6">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-foreground">소비 통계 리포트 📈</h1>
-    </div>
+    <PageIntroHeader
+      title="소비 통계 리포트 📈"
+      description="월별 수입·지출 추이와 카테고리별 지출 분포를 한눈에 확인해보세요."
+    />
 
     <div class="flex flex-col gap-6">
       <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm">
         <div class="flex items-center gap-2 p-6 pb-2">
           <BarChart3 class="h-5 w-5 text-primary" />
-          <h2 class="text-lg font-semibold text-foreground">
-            월별 수입/지출 추이
-          </h2>
+          <h2 class="text-lg font-semibold text-foreground">월별 수입/지출 추이</h2>
         </div>
         <div class="p-6">
           <div class="h-[300px] w-full">
-            <BarChart
-              v-if="barData"
-              :chart-data="barData"
-              :chart-options="barOptions"
-            />
+            <BarChart v-if="barData" :chart-data="barData" :chart-options="barOptions" />
           </div>
         </div>
       </UiCard>
@@ -283,18 +279,13 @@ onMounted(fetchData);
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
           <div class="h-[300px] relative flex items-center justify-center">
-            <PieChart
-              v-if="pieData"
-              :chart-data="pieData"
-              :chart-options="pieOptions"
-            />
+            <PieChart v-if="pieData" :chart-data="pieData" :chart-options="pieOptions" />
 
             <div
               v-if="pieData"
               class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
             >
-              <span
-                class="text-xs font-medium text-muted-foreground uppercase tracking-wider"
+              <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 >Total</span
               >
               <span class="text-xl font-bold text-foreground mt-1">
@@ -309,15 +300,10 @@ onMounted(fetchData);
               class="flex items-center justify-between border-b border-border/50 pb-2 last:border-0"
             >
               <div class="flex items-center gap-3">
-                <span
-                  class="h-3 w-3 rounded-full"
-                  :style="{ backgroundColor: item.color }"
-                ></span>
+                <span class="h-3 w-3 rounded-full" :style="{ backgroundColor: item.color }"></span>
                 <span class="font-medium text-foreground">{{ item.name }}</span>
               </div>
-              <span class="font-bold text-foreground"
-                >{{ item.amount.toLocaleString() }}원</span
-              >
+              <span class="font-bold text-foreground">{{ item.amount.toLocaleString() }}원</span>
             </div>
           </div>
         </div>

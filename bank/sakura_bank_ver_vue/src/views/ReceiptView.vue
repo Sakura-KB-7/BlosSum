@@ -1,11 +1,9 @@
 <template>
   <div class="space-y-6">
-    <!-- 상단 페이지 제목 -->
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-foreground flex items-center gap-2">
-        영수증 스캔 등록 🧾
-      </h1>
-    </div>
+    <PageIntroHeader
+      title="영수증 스캔 등록 🧾"
+      description="사진에서 결제 정보를 추출해 거래 내역으로 빠르게 등록해보세요."
+    />
 
     <!--
     레이아웃 컨테이너
@@ -121,6 +119,7 @@ import { ScanLine, Loader2Icon, CheckCircle2Icon } from 'lucide-vue-next';
 import ReceiptUploader from '@/components/receipt/ReceiptUploader.vue';
 import ReceiptAlertModal from '@/components/receipt/ReceiptAlertModal.vue';
 import InputFormView from '@/components/receipt/InputFormView.vue';
+import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { getRecommendedCategory } from '@/ocr/api/llm';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
