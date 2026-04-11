@@ -3,7 +3,6 @@ import { Sparkles, Wallet, Landmark, TrendingUp, ExternalLink } from 'lucide-vue
 import { computed, onMounted, ref, watch } from 'vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { cn } from '@/shared/lib/utils';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
@@ -295,10 +294,12 @@ onMounted(async () => {
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      title="AI 맞춤 소식지 📰"
-      description="당신의 소비 패턴과 실시간 검색 정보를 결합한 맞춤형 카드뉴스를 확인하세요."
-    />
+    <div>
+      <h1 class="text-2xl font-bold text-foreground">AI 맞춤 소식지 📰</h1>
+      <p class="text-muted-foreground">
+        당신의 소비 패턴과 실시간 검색 정보를 결합한 맞춤형 카드뉴스를 확인하세요
+      </p>
+    </div>
 
     <UiCard
       class="border-none bg-gradient-to-r from-primary/10 via-amber-50 to-primary/5 shadow-sm backdrop-blur-sm"

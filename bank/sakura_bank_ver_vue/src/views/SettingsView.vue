@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useProfileStore } from '@/stores/profile';
 import pkg from '../../package.json';
 
@@ -103,10 +102,12 @@ function clearNewsletterCache() {
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      title="설정 · 프로필 ⚙️"
-      description="이름·연락처·예산과, 이 기기에서만 쓰는 화면·캐시 설정을 바꿀 수 있어요."
-    />
+    <div>
+      <h1 class="text-2xl font-bold text-foreground">설정 · 프로필 ⚙️</h1>
+      <p class="text-muted-foreground">
+        이름·연락처·예산과, 이 기기에서만 쓰는 화면·캐시 설정을 바꿀 수 있어요.
+      </p>
+    </div>
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
       <form class="flex flex-col gap-4 p-6" @submit.prevent="onSave">

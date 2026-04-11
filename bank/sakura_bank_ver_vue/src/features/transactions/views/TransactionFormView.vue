@@ -3,7 +3,6 @@ import { computed, onMounted, ref, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 
@@ -159,10 +158,14 @@ function onCancel() {
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      :title="isEdit ? '거래 수정 ✏️' : '거래 등록 🧾'"
-      description="날짜·금액·카테고리·제목을 입력하고 저장하세요."
-    />
+    <div>
+      <h1 class="text-2xl font-bold text-foreground">
+        {{ isEdit ? '거래 수정' : '거래 등록' }}
+      </h1>
+      <p class="text-muted-foreground">
+        날짜·금액·카테고리·제목을 입력하고 저장하세요.
+      </p>
+    </div>
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
       <form class="flex flex-col gap-4 p-6" @submit.prevent="onSubmit">

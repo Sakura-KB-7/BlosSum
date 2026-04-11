@@ -1,7 +1,6 @@
 <script setup>
 import { reactive, ref, onMounted } from 'vue';
 import { Download, RotateCcw, Trash2, Heart, Sparkles } from 'lucide-vue-next';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
 import { useLoadingStore } from '@/stores/loading';
@@ -204,10 +203,10 @@ const getAdjustedFrame = (frameId, themeId) => {
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      title="부적 꾸미기 🔮"
-      description="행운의 심볼과 문구를 조합해 나만의 부적을 완성해보세요."
-    />
+    <div>
+      <h1 class="text-2xl font-bold text-foreground flex items-center gap-2">부적 꾸미기 🔮</h1>
+      <p class="text-muted-foreground">행운의 심볼과 문구를 조합해 나만의 부적을 만드세요.</p>
+    </div>
 
     <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm overflow-hidden">
       <div

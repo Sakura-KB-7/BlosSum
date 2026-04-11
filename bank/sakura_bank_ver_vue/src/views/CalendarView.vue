@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight, Plus, X, Pencil, Trash2 } from 'lucide-vue-n
 import { useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { useLoadingStore } from '@/stores/loading';
@@ -82,8 +81,17 @@ function onDayClick(day) {
   showPanel.value = true;
 }
 
-function onAddTransaction() {
-  router.push({ name: 'transaction-new', query: { date: selectedDate.value } });
+async function onAddTransaction() {
+  loadingStore.showOverlay({
+    context: 'calendar-add',
+    title: '거래 추가 화면으로 이동 중이에요',
+    description: '선택한 날짜를 미리 채우고 있습니다.',
+  });
+  try {
+    await router.push({ name: 'transaction-new', query: { date: selectedDate.value } });
+  } finally {
+    loadingStore.hideOverlay();
+  }
 }
 
 async function onEditTransaction(id) {
@@ -164,12 +172,8 @@ const calendarCells = computed(() => {
 
 <template>
   <div class="space-y-4">
-    <div class="relative z-[60] flex flex-wrap items-start justify-between gap-3">
-      <PageIntroHeader
-        title="캘린더 가계부 📅"
-        description="날짜를 눌러 일별 거래를 확인하고, 바로 수정/삭제까지 이어서 관리해보세요."
-        class="min-w-[260px] flex-1"
-      />
+    <div class="relative z-[60] flex flex-wrap items-center justify-between gap-2">
+      <h1 class="text-2xl font-bold text-foreground">캘린더 가계부 📅</h1>
       <UiButton
         class="relative z-[60] shrink-0 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
         @click="onAddTransaction"

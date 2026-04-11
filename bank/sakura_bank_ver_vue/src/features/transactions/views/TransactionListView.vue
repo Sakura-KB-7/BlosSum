@@ -4,7 +4,6 @@ import { RouterLink, useRouter } from 'vue-router';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { cn } from '@/shared/lib/utils';
@@ -101,10 +100,10 @@ const categoryOptions = computed(() => {
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      title="거래 내역 💸"
-      description="필터와 정렬로 거래를 빠르게 찾고, 필요한 내역을 바로 수정·삭제할 수 있어요."
-    />
+    <div>
+      <h1 class="text-2xl font-bold text-foreground">거래 내역 💸</h1>
+      <p class="text-muted-foreground">소중한 기록들을 한눈에 확인하고 관리해 보세요</p>
+    </div>
 
     <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm">
       <div class="flex flex-wrap items-end gap-3 p-4">
