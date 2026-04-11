@@ -18,7 +18,8 @@ const isVisible = computed(() => loadingStore.overlay.visible);
         <div class="w-full max-w-md rounded-3xl border border-white/40 bg-white/90 p-6 shadow-2xl">
           <LoadingStage
             :key="loadingStore.overlay.key"
-            :duration="1500"
+            :auto-complete="false"
+            :finishing="loadingStore.overlay.finishing"
             :variant="loadingStore.overlay.variant"
             :title="loadingStore.overlay.title"
             :description="loadingStore.overlay.description"

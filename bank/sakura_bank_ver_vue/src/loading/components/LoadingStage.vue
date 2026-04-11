@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import PetalCanvas from '@/loading/components/PetalCanvas.vue';
 import { pickRandomLoadingVariant } from '@/loading/constants';
 
@@ -19,6 +19,14 @@ const props = defineProps({
   description: {
     type: String,
     default: '잠시만 기다려 주세요.',
+  },
+  autoComplete: {
+    type: Boolean,
+    default: true,
+  },
+  finishing: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -40,6 +48,13 @@ function complete() {
 }
 
 function tick(now) {
+  if (!props.autoComplete) {
+    const next = progress.value + 0.28 + Math.random() * 0.32;
+    progress.value = Math.min(next, 92);
+    rafId = requestAnimationFrame(tick);
+    return;
+  }
+
   if (!startAt) startAt = now;
   const elapsed = now - startAt;
   const ratio = Math.min(elapsed / props.duration, 1);
@@ -57,6 +72,14 @@ onMounted(() => {
   startAt = 0;
   rafId = requestAnimationFrame(tick);
 });
+
+watch(
+  () => props.finishing,
+  (isFinishing) => {
+    if (!isFinishing || props.autoComplete) return;
+    progress.value = 100;
+  }
+);
 
 onBeforeUnmount(() => {
   cancelAnimationFrame(rafId);
