@@ -13,7 +13,6 @@ import {
 } from 'lucide-vue-next';
 
 import UiCard from '@/shared/ui/UiCard.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import StatCard from '../components/StatCard.vue';
 import CategoryPie from '../components/CategoryPie.vue';
 import NewsletterWidget from '../components/NewsletterWidget.vue';
@@ -41,6 +40,15 @@ const currentMonth = today.getMonth() + 1;
 const previousMonthDate = new Date(currentYear, today.getMonth() - 1, 1);
 const previousYear = previousMonthDate.getFullYear();
 const previousMonth = previousMonthDate.getMonth() + 1;
+
+const dateLabel = computed(() =>
+  new Intl.DateTimeFormat('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  }).format(today)
+);
 
 const formatAmount = (val) => new Intl.NumberFormat('ko-KR').format(Number(val || 0)) + '원';
 
@@ -218,10 +226,14 @@ onMounted(async () => {
 
 <template>
   <div class="space-y-6 max-w-full mx-auto pb-10">
-    <PageIntroHeader
-      title="내 지갑 대시보드 🌸"
-      description="이번 달 수입·지출·소비율과 핵심 위젯을 한눈에 확인해보세요."
-    />
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-foreground tracking-tight">
+          환영합니다, 오늘도 좋은 하루예요 🌸
+        </h1>
+        <p class="text-muted-foreground text-sm">{{ dateLabel }}</p>
+      </div>
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch mb-6">
       <StatCard

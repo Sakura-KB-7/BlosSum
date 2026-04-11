@@ -2,7 +2,6 @@
 import { ref, onMounted, computed } from 'vue';
 import { BarChart3, PieChart as PieIcon } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { cn } from '@/shared/lib/utils';
 import { useAuthStore } from '@/stores/auth';
 import { http } from '@/api/http';
@@ -252,10 +251,9 @@ onMounted(fetchData);
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      title="소비 통계 리포트 📈"
-      description="월별 수입·지출 추이와 카테고리별 지출 분포를 한눈에 확인해보세요."
-    />
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-foreground">소비 통계 리포트 📈</h1>
+    </div>
 
     <div class="flex flex-col gap-6">
       <UiCard class="border-none bg-card/80 shadow-sm backdrop-blur-sm">

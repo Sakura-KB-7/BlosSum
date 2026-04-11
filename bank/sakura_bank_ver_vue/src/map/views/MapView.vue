@@ -7,7 +7,6 @@ import MapSavedPlacesCard from '@/map/components/MapSavedPlacesCard.vue';
 import MapSearchBar from '@/map/components/MapSearchBar.vue';
 import MapSearchResultsCard from '@/map/components/MapSearchResultsCard.vue';
 import MapSummaryCards from '@/map/components/MapSummaryCards.vue';
-import PageIntroHeader from '@/components/PageIntroHeader.vue';
 import { useMapLocation } from '@/map/composables/useMapLocation';
 import { useMapPlaces } from '@/map/composables/useMapPlaces';
 import { useMapSearch } from '@/map/composables/useMapSearch';
@@ -94,10 +93,15 @@ onMounted(async () => {
 
 <template>
   <div class="space-y-6">
-    <PageIntroHeader
-      title="나의 소비지도 🗺️"
-      description="자주 방문하는 장소와 지역별 지출 분포를 한눈에 확인해보세요."
-    />
+    <!-- 이 화면이 어떤 기능을 제공하는지 먼저 설명하는 헤더 영역 -->
+    <div>
+      <div>
+        <h1 class="text-2xl font-bold text-foreground">나의 소비지도 🗺️</h1>
+        <p class="text-muted-foreground">
+          자주 방문하는 장소와 지역별 지출 분포를 한눈에 확인해보세요 📍
+        </p>
+      </div>
+    </div>
 
     <MapSearchBar
       v-model:keyword="mapSearch.keyword.value"
