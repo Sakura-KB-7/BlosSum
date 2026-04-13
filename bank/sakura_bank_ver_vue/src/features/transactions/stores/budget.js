@@ -95,6 +95,9 @@ export const useBudgetStore = defineStore('budget', () => {
     const targetId = idPart(id);
     const currentUid = idPart(auth.currentUserId);
     if (!currentUid) throw new Error('로그인 정보가 없습니다.');
+    if (!targetId || !/^\d+$/.test(targetId)) {
+      throw new Error('삭제할 거래 ID 형식이 올바르지 않습니다.');
+    }
 
     const target = items.value.find((x) => idPart(x.id) === targetId);
     if (!target) {
