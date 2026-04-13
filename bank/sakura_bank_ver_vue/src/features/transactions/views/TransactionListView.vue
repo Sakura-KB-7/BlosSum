@@ -4,6 +4,7 @@ import { RouterLink, useRouter } from 'vue-router';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
+import UiAlertDialog from '@/shared/ui/UiAlertDialog.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { cn } from '@/shared/lib/utils';
@@ -17,6 +18,12 @@ const categoryFilter = ref('');
 const from = ref('');
 const to = ref('');
 const dateSort = ref('desc');
+const confirmOpen = ref(false);
+const pendingDeleteId = ref(null);
+const alertOpen = ref(false);
+const alertTitle = ref('');
+const alertDescription = ref('');
+const alertTone = ref('default');
 
 // 페이지네이션
 const currentPage = ref(1);
@@ -84,9 +91,35 @@ function categoryName(categoryId) {
 function won(n) {
   return new Intl.NumberFormat('ko-KR').format(n) + '원';
 }
-async function onDelete(id) {
-  if (!confirm('이 거래를 삭제할까요?')) return;
-  await budget.removeRow(String(id));
+function openAlert(title, description, tone = 'default') {
+  alertTitle.value = title;
+  alertDescription.value = description;
+  alertTone.value = tone;
+  alertOpen.value = true;
+}
+
+function onDelete(id) {
+  pendingDeleteId.value = String(id);
+  confirmOpen.value = true;
+}
+
+function closeDeleteDialog() {
+  confirmOpen.value = false;
+  pendingDeleteId.value = null;
+}
+
+async function onConfirmDelete() {
+  if (!pendingDeleteId.value) {
+    closeDeleteDialog();
+    return;
+  }
+  try {
+    await budget.removeRow(pendingDeleteId.value);
+  } catch (error) {
+    openAlert('삭제 실패', '거래를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.', 'danger');
+  } finally {
+    closeDeleteDialog();
+  }
 }
 function onEdit(id) {
   router.push({ name: 'transaction-edit', params: { id: String(id) } });
@@ -293,5 +326,27 @@ const categoryOptions = computed(() => {
         </UiButton>
       </div>
     </UiCard>
+
+    <UiAlertDialog
+      :open="confirmOpen"
+      title="거래를 삭제할까요?"
+      description="삭제한 거래는 복구할 수 없습니다."
+      tone="danger"
+      confirm-text="삭제"
+      cancel-text="취소"
+      :show-cancel="true"
+      @close="closeDeleteDialog"
+      @confirm="onConfirmDelete"
+    />
+
+    <UiAlertDialog
+      :open="alertOpen"
+      :title="alertTitle"
+      :description="alertDescription"
+      :tone="alertTone"
+      confirm-text="확인"
+      @close="alertOpen = false"
+      @confirm="alertOpen = false"
+    />
   </div>
 </template>

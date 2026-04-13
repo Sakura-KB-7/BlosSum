@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Plus, X, Pencil, Trash2 } from 'lucide-vue-n
 import { useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
+import UiAlertDialog from '@/shared/ui/UiAlertDialog.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 import { useLoadingStore } from '@/stores/loading';
@@ -37,6 +38,12 @@ const selectedDate = ref(
   `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 );
 const showPanel = ref(false);
+const confirmOpen = ref(false);
+const pendingDeleteId = ref(null);
+const alertOpen = ref(false);
+const alertTitle = ref('');
+const alertDescription = ref('');
+const alertTone = ref('default');
 
 const year = computed(() => currentDate.value.getFullYear());
 const month = computed(() => currentDate.value.getMonth());
@@ -108,16 +115,38 @@ async function onEditTransaction(id) {
 }
 
 async function onDeleteTransaction(id) {
-  if (!window.confirm('이 거래를 삭제할까요?')) return;
+  pendingDeleteId.value = String(id);
+  confirmOpen.value = true;
+}
 
+function closeDeleteDialog() {
+  confirmOpen.value = false;
+  pendingDeleteId.value = null;
+}
+
+function openAlert(title, description, tone = 'default') {
+  alertTitle.value = title;
+  alertDescription.value = description;
+  alertTone.value = tone;
+  alertOpen.value = true;
+}
+
+async function onConfirmDeleteTransaction() {
+  if (!pendingDeleteId.value) {
+    closeDeleteDialog();
+    return;
+  }
   loadingStore.showOverlay({
     context: 'calendar-delete',
     title: '거래를 삭제하고 있어요',
     description: '일별 내역과 통계를 함께 갱신하는 중입니다.',
   });
   try {
-    await budget.removeRow(String(id));
+    await budget.removeRow(pendingDeleteId.value);
+  } catch (error) {
+    openAlert('삭제 실패', '거래를 삭제하지 못했습니다. 잠시 후 다시 시도해 주세요.', 'danger');
   } finally {
+    closeDeleteDialog();
     loadingStore.hideOverlay();
   }
 }
@@ -411,5 +440,27 @@ const calendarCells = computed(() => {
         </div>
       </div>
     </div>
+
+    <UiAlertDialog
+      :open="confirmOpen"
+      title="거래를 삭제할까요?"
+      description="삭제한 거래는 복구할 수 없습니다."
+      tone="danger"
+      confirm-text="삭제"
+      cancel-text="취소"
+      :show-cancel="true"
+      @close="closeDeleteDialog"
+      @confirm="onConfirmDeleteTransaction"
+    />
+
+    <UiAlertDialog
+      :open="alertOpen"
+      :title="alertTitle"
+      :description="alertDescription"
+      :tone="alertTone"
+      confirm-text="확인"
+      @close="alertOpen = false"
+      @confirm="alertOpen = false"
+    />
   </div>
 </template>

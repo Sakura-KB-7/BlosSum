@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
+import UiAlertDialog from '@/shared/ui/UiAlertDialog.vue';
 import { useProfileStore } from '@/stores/profile';
 import pkg from '../../package.json';
 
@@ -12,6 +13,10 @@ const email = ref('');
 const monthlyBudget = ref(0);
 const currency = ref('KRW');
 const saving = ref(false);
+const alertOpen = ref(false);
+const alertTitle = ref('');
+const alertDescription = ref('');
+const alertTone = ref('default');
 
 const THEME_KEY = 'blosum_settings_theme';
 const NEWSLETTER_PREFIX = 'blosum_newsletter_v1_';
@@ -48,6 +53,13 @@ function setTheme(mode) {
 const appVersion = computed(() => pkg.version ?? '—');
 const envMode = computed(() => import.meta.env.MODE);
 
+function openAlert(title, description, tone = 'default') {
+  alertTitle.value = title;
+  alertDescription.value = description;
+  alertTone.value = tone;
+  alertOpen.value = true;
+}
+
 onMounted(async () => {
   loadTheme();
   systemMq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -79,7 +91,9 @@ async function onSave() {
       monthlyBudget: Math.max(0, Number(monthlyBudget.value) || 0),
       currency: currency.value,
     });
-    alert('저장되었습니다.');
+    openAlert('저장 완료', '설정이 정상적으로 저장되었습니다.', 'success');
+  } catch (error) {
+    openAlert('저장 실패', '설정을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.', 'danger');
   } finally {
     saving.value = false;
   }
@@ -92,11 +106,11 @@ function clearNewsletterCache() {
     if (k?.startsWith(NEWSLETTER_PREFIX)) keys.push(k);
   }
   if (keys.length === 0) {
-    alert('지울 AI 소식지 저장 데이터가 없습니다.');
+    openAlert('안내', '지울 AI 소식지 저장 데이터가 없습니다.');
     return;
   }
   keys.forEach((k) => localStorage.removeItem(k));
-  alert(`AI 소식지 저장 ${keys.length}건을 지웠습니다.`);
+  openAlert('삭제 완료', `AI 소식지 저장 ${keys.length}건을 지웠습니다.`, 'success');
 }
 </script>
 
@@ -215,5 +229,15 @@ function clearNewsletterCache() {
       </p>
       <p class="mt-1">모드 {{ envMode }}</p>
     </UiCard>
+
+    <UiAlertDialog
+      :open="alertOpen"
+      :title="alertTitle"
+      :description="alertDescription"
+      :tone="alertTone"
+      confirm-text="확인"
+      @close="alertOpen = false"
+      @confirm="alertOpen = false"
+    />
   </div>
 </template>
