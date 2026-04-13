@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import UiCard from '@/shared/ui/UiCard.vue';
 import UiButton from '@/shared/ui/UiButton.vue';
+import UiAlertDialog from '@/shared/ui/UiAlertDialog.vue';
 import { useBudgetStore } from '@/features/transactions/stores/budget';
 import { useCategoryStore } from '@/features/transactions/stores/categories';
 
@@ -23,6 +24,10 @@ const memo = ref('');
 const isFixed = ref(false);
 const recurringDay = ref(null);
 const saving = ref(false);
+const alertOpen = ref(false);
+const alertTitle = ref('');
+const alertDescription = ref('');
+const alertTone = ref('default');
 
 const categoryList = computed(() =>
   type.value === 'income' ? categories.income : categories.expense
@@ -124,17 +129,24 @@ function buildPayload() {
   return base;
 }
 
+function openAlert(title, description, tone = 'default') {
+  alertTitle.value = title;
+  alertDescription.value = description;
+  alertTone.value = tone;
+  alertOpen.value = true;
+}
+
 async function onSubmit() {
   if (!date.value || amount.value == null || Number.isNaN(amount.value)) {
-    alert('날짜와 금액을 입력해 주세요.');
+    openAlert('입력 확인', '날짜와 금액을 입력해 주세요.');
     return;
   }
   if (categoryId.value === '' || Number.isNaN(parseCategoryId())) {
-    alert('카테고리를 선택해 주세요.');
+    openAlert('입력 확인', '카테고리를 선택해 주세요.');
     return;
   }
   if (!title.value.trim()) {
-    alert('제목을 입력해 주세요.');
+    openAlert('입력 확인', '제목을 입력해 주세요.');
     return;
   }
   saving.value = true;
@@ -146,6 +158,8 @@ async function onSubmit() {
       await budget.createRow(payload);
     }
     router.push({ name: 'transactions' });
+  } catch (error) {
+    openAlert('저장 실패', '거래를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.', 'danger');
   } finally {
     saving.value = false;
   }
@@ -162,9 +176,7 @@ function onCancel() {
       <h1 class="text-2xl font-bold text-foreground">
         {{ isEdit ? '거래 수정' : '거래 등록' }}
       </h1>
-      <p class="text-muted-foreground">
-        날짜·금액·카테고리·제목을 입력하고 저장하세요.
-      </p>
+      <p class="text-muted-foreground">날짜·금액·카테고리·제목을 입력하고 저장하세요.</p>
     </div>
 
     <UiCard class="max-w-lg border-none bg-card/80 shadow-sm backdrop-blur-sm">
@@ -274,5 +286,15 @@ function onCancel() {
         </div>
       </form>
     </UiCard>
+
+    <UiAlertDialog
+      :open="alertOpen"
+      :title="alertTitle"
+      :description="alertDescription"
+      :tone="alertTone"
+      confirm-text="확인"
+      @close="alertOpen = false"
+      @confirm="alertOpen = false"
+    />
   </div>
 </template>
