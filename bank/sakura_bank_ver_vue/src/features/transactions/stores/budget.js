@@ -3,20 +3,19 @@ import { defineStore } from 'pinia';
 import { http } from '@/api/http';
 import { useAuthStore } from '@/stores/auth';
 
-function sameMonth(dateIso, y, m) {
-  const d = new Date(dateIso);
-  return d.getFullYear() === y && d.getMonth() + 1 === m;
-}
-
 function idPart(id) {
   if (id === null || id === undefined) return '';
   return String(id).trim();
 }
 
+function sameMonth(dateIso, y, m) {
+  const d = new Date(dateIso);
+  return d.getFullYear() === y && d.getMonth() + 1 === m;
+}
+
 function sameUserId(recordUserId, currentUserId) {
   return idPart(recordUserId).trim() === idPart(currentUserId).trim();
 }
-
 export const useBudgetStore = defineStore('budget', () => {
   const auth = useAuthStore();
   const items = ref([]);
@@ -86,6 +85,7 @@ export const useBudgetStore = defineStore('budget', () => {
       id: Number(id) || id,
       userId: currentUid,
     });
+
     const i = items.value.findIndex((x) => idPart(x.id) === targetId);
     if (i >= 0) items.value[i] = data;
     return data;
@@ -114,6 +114,7 @@ export const useBudgetStore = defineStore('budget', () => {
     }
   }
 
+  // 필터링된 데이터 반환
   function filtered(params) {
     return items.value.filter((row) => {
       if (params.type && row.type !== params.type) return false;
