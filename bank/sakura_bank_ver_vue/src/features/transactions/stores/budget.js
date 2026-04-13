@@ -12,6 +12,10 @@ function idPart(id) {
   return String(id);
 }
 
+function sameUserId(recordUserId, currentUserId) {
+  return idPart(recordUserId).trim() === idPart(currentUserId).trim();
+}
+
 export const useBudgetStore = defineStore('budget', () => {
   const auth = useAuthStore();
   const items = ref([]);
@@ -27,10 +31,11 @@ export const useBudgetStore = defineStore('budget', () => {
         return;
       }
 
-      const { data } = await http.get('/records', {
-        params: { userId: auth.currentUserId },
-      });
-      items.value = Array.isArray(data) ? data : [];
+      // json-server 쿼리에서 userId 타입(숫자/문자열) 불일치가 생길 수 있어
+      // 전체 조회 후 클라이언트에서 안전하게 사용자별 필터링합니다.
+      const { data } = await http.get('/records');
+      const list = Array.isArray(data) ? data : [];
+      items.value = list.filter((row) => sameUserId(row.userId, auth.currentUserId));
     } catch (e) {
       error.value = '거래 내역을 불러오지 못했습니다. json-server가 켜져 있는지 확인하세요.';
       items.value = [];
@@ -49,18 +54,20 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function updateRow(id, payload) {
-    const { data } = await http.put(`/records/${idPart(id)}`, {
+    const targetId = idPart(id);
+    const { data } = await http.put(`/records/${targetId}`, {
       ...payload,
       id: Number(id) || id,
     });
-    const i = items.value.findIndex((x) => idPart(x.id) === id);
+    const i = items.value.findIndex((x) => idPart(x.id) === targetId);
     if (i >= 0) items.value[i] = data;
     return data;
   }
 
   async function removeRow(id) {
-    await http.delete(`/records/${idPart(id)}`);
-    items.value = items.value.filter((x) => idPart(x.id) !== id);
+    const targetId = idPart(id);
+    await http.delete(`/records/${targetId}`);
+    items.value = items.value.filter((x) => idPart(x.id) !== targetId);
   }
 
   function filtered(params) {
