@@ -3,8 +3,8 @@ import { ref, onMounted, computed } from 'vue';
 import { BarChart3, PieChart as PieIcon } from 'lucide-vue-next';
 import UiCard from '@/shared/ui/UiCard.vue';
 import { cn } from '@/shared/lib/utils';
-import { useAuthStore } from '@/stores/auth';
-import { http } from '@/api/http';
+import { useBudgetStore } from '@/features/transactions/stores/budget';
+import { useCategoryStore } from '@/features/transactions/stores/categories';
 
 // 차트 컴포넌트 (막대, 원형)
 import BarChart from '@/components/statistics/BarChart.vue';
@@ -14,7 +14,8 @@ import PieChart from '@/components/statistics/PieChart.vue';
 const barData = ref(null); // 월별 수입/지출 차트 데이터
 const pieData = ref(null); // 카테고리별 지출 차트 데이터
 const rawCategories = ref([]); // 카테고리 원본 데이터
-const auth = useAuthStore();
+const budget = useBudgetStore();
+const categories = useCategoryStore();
 
 // 원형 차트 중앙에 표시할 총 지출 합계 계산
 const totalExpenseAmount = computed(() => {
@@ -46,15 +47,9 @@ const categoryList = computed(() => {
 // - categories: 카테고리 정보
 const fetchData = async () => {
   try {
-    const [recordRes, categoryRes] = await Promise.all([
-      http.get('/records'),
-      http.get('/categories'),
-    ]);
-
-    const records = (Array.isArray(recordRes.data) ? recordRes.data : []).filter(
-      (record) => record.userId === auth.currentUserId
-    );
-    rawCategories.value = categoryRes.data;
+    await Promise.all([budget.fetchAll(), categories.fetchAll()]);
+    const records = Array.isArray(budget.items) ? budget.items : [];
+    rawCategories.value = [...categories.income, ...categories.expense];
 
     // 최근 6개월 추이 데이터 가공
     const labels = [];

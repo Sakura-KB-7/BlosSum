@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k -n api,search,web -c blue,magenta,green \"npm run dev:api\" \"npm run dev:search\" \"npm run dev:web\"",
+    "dev": "concurrently -k -n search,web -c magenta,green \"npm run dev:search\" \"npm run dev:web\"",
     "dev:web": "vite",
     "dev:api": "npm run dev --prefix ../../../backend/BlosSum_Backend",
     "dev:search": "node --env-file=.env server/naver-search-proxy.js",
