@@ -9,7 +9,8 @@ function sameMonth(dateIso, y, m) {
 }
 
 function idPart(id) {
-  return String(id);
+  if (id === null || id === undefined) return '';
+  return String(id).trim();
 }
 
 function sameUserId(recordUserId, currentUserId) {
@@ -26,16 +27,28 @@ export const useBudgetStore = defineStore('budget', () => {
     loading.value = true;
     error.value = null;
     try {
-      if (!auth.currentUserId) {
+      const currentUid = idPart(auth.currentUserId);
+      if (!currentUid) {
         items.value = [];
         return;
       }
 
-      // json-server 쿼리에서 userId 타입(숫자/문자열) 불일치가 생길 수 있어
-      // 전체 조회 후 클라이언트에서 안전하게 사용자별 필터링합니다.
-      const { data } = await http.get('/records');
-      const list = Array.isArray(data) ? data : [];
-      items.value = list.filter((row) => sameUserId(row.userId, auth.currentUserId));
+      // 1차: 서버 쿼리 필터
+      const { data } = await http.get('/records', {
+        params: { userId: currentUid },
+      });
+      const queried = Array.isArray(data) ? data : [];
+
+      // 2차: 타입 불일치 방지를 위한 클라이언트 정규화 필터
+      if (queried.length > 0) {
+        items.value = queried.filter((row) => sameUserId(row.userId, currentUid));
+        return;
+      }
+
+      // 일부 데이터가 숫자/문자열 혼합일 때 대비
+      const { data: allData } = await http.get('/records');
+      const all = Array.isArray(allData) ? allData : [];
+      items.value = all.filter((row) => sameUserId(row.userId, currentUid));
     } catch (e) {
       error.value = '거래 내역을 불러오지 못했습니다. json-server가 켜져 있는지 확인하세요.';
       items.value = [];
@@ -45,12 +58,13 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function createRow(body) {
-    if (!auth.currentUserId) {
+    const currentUid = idPart(auth.currentUserId);
+    if (!currentUid) {
       throw new Error('로그인 정보가 없습니다.');
     }
     const { data } = await http.post('/records', {
       ...body,
-      userId: auth.currentUserId,
+      userId: currentUid,
     });
     items.value.unshift(data);
     return data;
@@ -58,13 +72,19 @@ export const useBudgetStore = defineStore('budget', () => {
 
   async function updateRow(id, payload) {
     const targetId = idPart(id);
+    const currentUid = idPart(auth.currentUserId);
+    if (!currentUid) throw new Error('로그인 정보가 없습니다.');
     const existing = items.value.find((x) => idPart(x.id) === targetId);
     if (!existing) {
       throw new Error('수정할 거래를 찾을 수 없습니다.');
     }
+    if (!sameUserId(existing.userId, currentUid)) {
+      throw new Error('다른 사용자 거래는 수정할 수 없습니다.');
+    }
     const { data } = await http.put(`/records/${targetId}`, {
       ...payload,
       id: Number(id) || id,
+      userId: currentUid,
     });
     const i = items.value.findIndex((x) => idPart(x.id) === targetId);
     if (i >= 0) items.value[i] = data;
@@ -73,12 +93,25 @@ export const useBudgetStore = defineStore('budget', () => {
 
   async function removeRow(id) {
     const targetId = idPart(id);
-    const exists = items.value.some((x) => idPart(x.id) === targetId);
-    if (!exists) {
+    const currentUid = idPart(auth.currentUserId);
+    if (!currentUid) throw new Error('로그인 정보가 없습니다.');
+
+    const target = items.value.find((x) => idPart(x.id) === targetId);
+    if (!target) {
       throw new Error('삭제할 거래를 찾을 수 없습니다.');
     }
-    await http.delete(`/records/${targetId}`);
+    if (!sameUserId(target.userId, currentUid)) {
+      throw new Error('다른 사용자 거래는 삭제할 수 없습니다.');
+    }
+
+    const previousItems = [...items.value];
     items.value = items.value.filter((x) => idPart(x.id) !== targetId);
+    try {
+      await http.delete(`/records/${targetId}`);
+    } catch (e) {
+      items.value = previousItems;
+      throw e;
+    }
   }
 
   function filtered(params) {
@@ -87,7 +120,7 @@ export const useBudgetStore = defineStore('budget', () => {
       if (
         params.categoryId !== undefined &&
         params.categoryId !== '' &&
-        row.categoryId !== params.categoryId
+        idPart(row.categoryId) !== idPart(params.categoryId)
       )
         return false;
       if (params.from && row.date < params.from) return false;
