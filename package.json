@@ -3,12 +3,13 @@
   "private": true,
   "description": "MoneyBlosSum — Vue 앱은 bank/sakura_bank_ver_vue 에 있습니다.",
   "scripts": {
-    "dev": "concurrently -k -n api,web -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
-    "dev:web": "npm run dev --prefix bank/sakura_bank_ver_vue",
-    "dev:api": "npm run dev --prefix backend/json-server",
+    "dev": "concurrently -k -n api,search,web -c blue,magenta,green \"npm run dev:api\" \"npm run dev:search\" \"npm run dev:web\"",
+    "dev:web": "npm run dev:web --prefix bank/sakura_bank_ver_vue",
+    "dev:search": "npm run dev:search --prefix bank/sakura_bank_ver_vue",
+    "dev:api": "npm run dev --prefix ../backend/BlosSum_Backend",
     "build": "npm run build --prefix bank/sakura_bank_ver_vue",
     "install:web": "npm install --prefix bank/sakura_bank_ver_vue",
-    "install:api": "npm install --prefix backend/json-server"
+    "install:api": "npm install --prefix ../backend/BlosSum_Backend"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

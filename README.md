@@ -29,7 +29,7 @@
 ### 필수
 
 - **Frontend:** Vite, Vue 3, Composition API, vue-router, axios, Pinia, Component 기반 구조, 이벤트 처리
-- **Backend:** json-server (`backend/json-server/db.json`)
+- **Backend:** json-server (`../backend/BlosSum_Backend/db.json`)
 
 ### 선택
 
@@ -116,7 +116,7 @@
 ## 8) 아키텍처
 
 ```text
-User → Vue3 (router → page → axios) ↔ json-server (backend/json-server/db.json)
+User → Vue3 (router → page → axios) ↔ json-server (../backend/BlosSum_Backend/db.json)
                   ↕
               reusable components
 ```
@@ -124,7 +124,7 @@ User → Vue3 (router → page → axios) ↔ json-server (backend/json-server/d
 ## 9) json-server 실행
 
 ```bash
-cd backend/json-server
+cd ../backend/BlosSum_Backend
 npm install
 npm run dev
 ```
