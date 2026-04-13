@@ -11,11 +11,13 @@ export const useProfileStore = defineStore('profile', () => {
   const auth = useAuthStore();
   const rows = ref([]);
   const loading = ref(false);
+  const error = ref(null);
 
   const profile = computed(() => rows.value[0] ?? null);
 
   async function fetchAll() {
     loading.value = true;
+    error.value = null;
     try {
       if (!auth.currentUserId) {
         rows.value = [];
@@ -28,12 +30,19 @@ export const useProfileStore = defineStore('profile', () => {
       rows.value = list.filter(
         (row) => idPart(row.userId).trim() === idPart(auth.currentUserId).trim()
       );
+    } catch (e) {
+      error.value = '설정 정보를 불러오지 못했습니다.';
+      rows.value = [];
     } finally {
       loading.value = false;
     }
   }
 
   async function save(partial) {
+    error.value = null;
+    if (!auth.currentUserId) {
+      throw new Error('로그인 정보가 없습니다.');
+    }
     const current = profile.value;
     if (current) {
       const { data } = await http.put(`/userSettings/${current.id}`, {
@@ -55,5 +64,5 @@ export const useProfileStore = defineStore('profile', () => {
     return data;
   }
 
-  return { rows, profile, loading, fetchAll, save };
+  return { rows, profile, loading, error, fetchAll, save };
 });

@@ -65,6 +65,9 @@ onMounted(async () => {
   systemMq = window.matchMedia('(prefers-color-scheme: dark)');
   systemMq.addEventListener('change', onSystemChange);
   await profile.fetchAll();
+  if (profile.error) {
+    openAlert('불러오기 실패', profile.error, 'danger');
+  }
 });
 
 onUnmounted(() => {

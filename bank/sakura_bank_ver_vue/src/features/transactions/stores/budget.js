@@ -49,6 +49,9 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function createRow(body) {
+    if (!auth.currentUserId) {
+      throw new Error('로그인 정보가 없습니다.');
+    }
     const { data } = await http.post('/records', {
       ...body,
       userId: auth.currentUserId,
@@ -59,6 +62,10 @@ export const useBudgetStore = defineStore('budget', () => {
 
   async function updateRow(id, payload) {
     const targetId = idPart(id);
+    const existing = items.value.find((x) => idPart(x.id) === targetId);
+    if (!existing) {
+      throw new Error('수정할 거래를 찾을 수 없습니다.');
+    }
     const { data } = await http.put(`/records/${targetId}`, {
       ...payload,
       id: Number(id) || id,
@@ -71,11 +78,14 @@ export const useBudgetStore = defineStore('budget', () => {
   }
 
   async function removeRow(id) {
-    // 1. targetId 가져오기
-    const targetId = String(id).trim();
-
-    // 2. 서버에 요청을 보내기 '전'에 로컬에서 먼저 지우기
-    items.value = items.value.filter((x) => String(x.id).trim() !== targetId);
+    const targetId = idPart(id);
+    const exists = items.value.some((x) => idPart(x.id) === targetId);
+    if (!exists) {
+      throw new Error('삭제할 거래를 찾을 수 없습니다.');
+    }
+    await http.delete(`/records/${targetId}`);
+    items.value = items.value.filter((x) => idPart(x.id) !== targetId);
+  }
 
     try {
       // 3. 서버 삭제 요청
@@ -110,8 +120,9 @@ export const useBudgetStore = defineStore('budget', () => {
     let income = 0;
     let expense = 0;
     for (const r of rows) {
-      if (r.type === 'income') income += Number(r.amount);
-      else expense += Number(r.amount);
+      const amount = Number(r.amount || 0);
+      if (r.type === 'income') income += amount;
+      else expense += amount;
     }
     return { income, expense, net: income - expense, count: rows.length };
   }
