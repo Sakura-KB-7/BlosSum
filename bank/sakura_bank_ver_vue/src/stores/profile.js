@@ -3,6 +3,10 @@ import { defineStore } from 'pinia';
 import { http } from '@/api/http';
 import { useAuthStore } from '@/stores/auth';
 
+function idPart(id) {
+  return String(id);
+}
+
 export const useProfileStore = defineStore('profile', () => {
   const auth = useAuthStore();
   const rows = ref([]);
@@ -18,10 +22,12 @@ export const useProfileStore = defineStore('profile', () => {
         return;
       }
 
-      const { data } = await http.get('/userSettings', {
-        params: { userId: auth.currentUserId },
-      });
-      rows.value = Array.isArray(data) ? data : [];
+      // userId 타입 불일치(숫자/문자열)로 조회 누락되는 경우를 방지
+      const { data } = await http.get('/userSettings');
+      const list = Array.isArray(data) ? data : [];
+      rows.value = list.filter(
+        (row) => idPart(row.userId).trim() === idPart(auth.currentUserId).trim()
+      );
     } finally {
       loading.value = false;
     }
